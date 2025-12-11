@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ways</title>
 
-    <meta property="og:title" content="Ways">
-    <meta property="og:description" content="Acesse o aplicativo Ways.">
     <meta property="og:image" content="https://mesaque-zake.github.io/Ways/icon-512.png">
     <meta property="og:url" content="https://mesaque-zake.github.io/Ways/">
+    
+    <meta property="og:title" content="Ways">
+    <meta property="og:description" content="Acesse o aplicativo Ways.">
     <meta property="og:type" content="website">
 
     <link rel="manifest" href="manifest.json">
@@ -21,75 +22,91 @@
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
 
     <style>
-        /* Reseta margens e define a cor base */
+        /* Base */
         body, html {
             margin: 0; padding: 0; height: 100%; overflow: hidden;
             background-color: #6105e8; /* Fundo Roxo */
             font-family: 'Dancing Script', cursive;
         }
 
-        /* --- Estilos da Tela de Carregamento --- */
+        /* --- TELA DE LOADING --- */
         #loading-screen {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            position: fixed; /* Garante que fique fixa na frente de tudo */
+            top: 0; left: 0; width: 100%; height: 100%;
             background-color: #6105e8;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 10; /* Fica na frente de tudo */
-            transition: opacity 0.5s ease-out; /* Fade out suave quando terminar */
+            z-index: 9999; /* Z-index altíssimo para nada cobrir */
+            transition: opacity 0.5s ease-out;
         }
 
         .pulsing-logo {
-            color: white; font-size: 4rem; margin-bottom: 30px;
-            animation: pulseLogo 2s infinite ease-in-out;
+            color: white; font-size: 4rem; margin-bottom: 40px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            animation: pulse 2s infinite ease-in-out;
         }
 
-        /* Container do Caminhão e Barra */
+        /* Container da Barra e Caminhão */
         .loading-progress-container {
-            width: 240px; /* Largura da barra */
-            text-align: center;
+            width: 80%; /* Ocupa 80% da largura da tela */
+            max-width: 300px; /* Mas não passa de 300px */
+            position: relative;
         }
 
-        /* Ícone do Caminhão (SVG) */
+        /* O Caminhão */
+        .truck-wrapper {
+            width: 100%;
+            position: absolute;
+            top: -35px; /* Fica em cima da barra */
+            /* Animação que move o caminhão da esquerda para a direita */
+            animation: driveTruck 3.5s linear forwards; 
+        }
+        
         .truck-icon {
-            width: 40px; height: auto; fill: white; /* Cor branca */
-            margin-bottom: 10px;
-            animation: truckBounce 0.8s infinite alternate ease-in-out;
+            width: 40px; height: 40px; /* Tamanho forçado para não sumir */
+            fill: white;
+            display: block;
+            /* O pulinho do caminhão */
+            animation: bounce 0.5s infinite alternate ease-in-out;
         }
 
-        /* O trilho da barra (fundo mais escuro) */
+        /* O Trilho da Barra */
         .progress-track {
             width: 100%; height: 6px;
-            background-color: rgba(255, 255, 255, 0.2); /* Branco transparente */
+            background-color: rgba(255, 255, 255, 0.3);
             border-radius: 10px; overflow: hidden;
+            margin-top: 5px;
         }
 
-        /* O preenchimento da barra (branco sólido) */
+        /* O Preenchimento Branco */
         .progress-fill {
-            height: 100%; width: 0%; background-color: white; border-radius: 10px;
-            /* Animação: cresce rápido até 80%, depois devagar até 95% em 4 segundos */
-            animation: fillProgress 4s ease-out forwards;
+            height: 100%; width: 0%; 
+            background-color: white; 
+            border-radius: 10px;
+            /* A barra enche junto com o caminhão */
+            animation: fillBar 3.5s linear forwards;
         }
 
-        /* --- Animações --- */
-        @keyframes pulseLogo {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.9; }
+        /* --- ANIMAÇÕES --- */
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.05); opacity: 0.9; } }
+        @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-3px); } }
+        
+        /* Animação sincronizada: Caminhão anda e Barra enche */
+        @keyframes driveTruck {
+            0% { left: 0%; }
+            90% { left: 85%; } /* Vai até o final quase */
+            100% { left: 85%; }
         }
-        @keyframes truckBounce {
-            from { transform: translateY(0); }
-            to { transform: translateY(-4px); }
-        }
-        @keyframes fillProgress {
+        @keyframes fillBar {
             0% { width: 0%; }
-            70% { width: 80%; } /* Chega rápido em 80% */
-            100% { width: 95%; } /* Desacelera e para em 95% */
+            90% { width: 95%; }
+            100% { width: 95%; }
         }
 
-        /* --- Estilo do Iframe do App --- */
+        /* O App (Iframe) */
         iframe {
             display: block; border: none; height: 100vh; width: 100vw;
-            background-color: #6105e8; position: relative; z-index: 1;
-            /* O iframe começa invisível, o JS vai mostrar ele quando carregar */
-            opacity: 0; transition: opacity 0.5s ease-in;
+            background-color: #6105e8; opacity: 0; position: absolute; z-index: 1;
+            transition: opacity 0.8s ease-in;
         }
     </style>
 </head>
@@ -99,63 +116,78 @@
         <div class="pulsing-logo">Ways</div>
         
         <div class="loading-progress-container">
-            <svg class="truck-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M48 0C21.5 0 0 21.5 0 48V368c0 26.5 21.5 48 48 48H64c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288 256 237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zM416 160h50.7L544 237.3V256H416V160zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
+            <div class="truck-wrapper">
+                <svg class="truck-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                    <path d="M48 0C21.5 0 0 21.5 0 48V368c0 26.5 21.5 48 48 48H64c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288 256 237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zM416 160h50.7L544 237.3V256H416V160zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/>
+                </svg>
+            </div>
             
             <div class="progress-track">
                 <div class="progress-fill"></div>
             </div>
         </div>
     </div>
+
     <iframe id="app-frame" src="https://script.google.com/macros/s/AKfycbz9-TRx-SI_Z1m5bt3uZvpsNGZ3ithe8hsnu6SCcmqwUo9vBH5lQMD3Ih3Fqbp9ud3o/exec"></iframe>
 
-   <script>
-        // 1. Registra o Service Worker (Padrão)
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./sw.js');
-        }
+    <script>
+        if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js'); }
 
         const iframe = document.getElementById('app-frame');
         const loadingScreen = document.getElementById('loading-screen');
         
-        // Variável para controlar o tempo
-        let horaQueSaiu = Date.now(); 
+        let horaQueSaiu = Date.now();
+        let appCarregou = false;
 
-        // 2. Quando o Google terminar de carregar pela primeira vez:
+        // Função para esconder o Loading (com atraso para garantir visualização)
+        function esconderLoading() {
+            // Só esconde se o App já carregou MESMO
+            if (appCarregou) {
+                loadingScreen.style.opacity = '0';
+                iframe.style.opacity = '1';
+                setTimeout(() => { loadingScreen.style.display = 'none'; }, 500);
+            }
+        }
+
+        // Quando o Google avisa que carregou
         iframe.onload = function() {
-            // Mostra o iframe e esconde o carregamento
-            iframe.style.opacity = '1';
-            loadingScreen.style.opacity = '0';
-            setTimeout(() => { loadingScreen.style.display = 'none'; }, 500);
+            appCarregou = true;
         };
 
-        // 3. O "Despertador Inteligente"
-        document.addEventListener("visibilitychange", function() {
-            
-            // Se o usuário MINIMIZOU ou TROCOU DE ABA
-            if (document.visibilityState === "hidden") {
-                horaQueSaiu = Date.now(); // Marca a hora exata que saiu
-            } 
-            
-            // Se o usuário VOLTOU
-            else if (document.visibilityState === "visible") {
-                const horaQueVoltou = Date.now();
-                const segundosFora = (horaQueVoltou - horaQueSaiu) / 1000;
+        // Força a tela de loading ficar visível por pelo menos 2.5 segundos
+        // Mesmo que a internet seja ultra rápida
+        setTimeout(() => {
+            if(appCarregou) {
+                esconderLoading();
+            } else {
+                // Se ainda não carregou depois de 2.5s, espera carregar de verdade
+                // O 'onload' lá em cima vai cuidar disso quando acontecer
+                // Mas podemos forçar uma verificação a cada segundo
+                let checarCarregamento = setInterval(() => {
+                    if(appCarregou) {
+                        esconderLoading();
+                        clearInterval(checarCarregamento);
+                    }
+                }, 500);
+            }
+        }, 2500); // <--- TEMPO MÍNIMO (2500ms = 2.5 segundos)
 
-                // CONFIGURAÇÃO: Tempo limite em segundos (ex: 600 = 10 minutos)
-                // Se ficou fora por MENOS de 10 minutos, não faz nada (mantém onde estava).
-                // Se ficou fora por MAIS de 10 minutos, recarrega.
-                if (segundosFora > 600) {
-                    console.log("Ficou muito tempo fora. Recarregando...");
-                    
-                    // Mostra a tela de loading de novo
+        // Lógica de sair e voltar (Cronômetro de 10 minutos)
+        document.addEventListener("visibilitychange", function() {
+            if (document.visibilityState === "hidden") {
+                horaQueSaiu = Date.now();
+            } else if (document.visibilityState === "visible") {
+                const segundosFora = (Date.now() - horaQueSaiu) / 1000;
+                
+                if (segundosFora > 600) { // 10 minutos
+                    appCarregou = false;
                     loadingScreen.style.display = 'flex';
-                    // Pequeno delay para permitir o display:flex aplicar antes da opacidade
                     setTimeout(() => { loadingScreen.style.opacity = '1'; }, 10);
-                    
                     iframe.style.opacity = '0';
-                    iframe.src = iframe.src; // Força o recarregamento
-                } else {
-                    console.log("Voltou rápido. Mantendo a sessão.");
+                    iframe.src = iframe.src;
+                    
+                    // Reinicia o tempo mínimo de loading ao recarregar
+                    setTimeout(() => { esconderLoading(); }, 2500);
                 }
             }
         });
