@@ -62,9 +62,11 @@
         
         /* O Ícone SVG do caminhão */
         .truck-icon {
-            width: auto; height: 30px;
-            fill: white; display: block;
-            /* Animação: o pulinho */
+            height: 40px;      /* Altura fixa */
+            width: 65px;       /* AUMENTAR AQUI: Deixa ele mais largo */
+            overflow: visible; /* O SEGREDO: Isso impede que corte as pontas */
+            fill: white; 
+            display: block;
             animation: bounce 0.5s infinite alternate ease-in-out;
         }
 
