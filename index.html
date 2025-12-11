@@ -1,16 +1,17 @@
-<!DOCTYPE html>
+   <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ways</title>
+
     <link rel="icon" type="image/png" href="Favicon.png">
 
     <meta property="og:image" content="https://mesaque-zake.github.io/Ways/icon-512.png">
     <meta property="og:url" content="https://mesaque-zake.github.io/Ways/">
     
-    <meta property="og:title" content="Ways - Otimizador de Rotas">
-    <meta property="og:description" content="O caminho mais rápido na palma da sua mão. Acesse o Ways.">
+    <meta property="og:title" content="Ways">
+    <meta property="og:description" content="Acesse o aplicativo Ways.">
     <meta property="og:type" content="website">
 
     <link rel="manifest" href="manifest.json">
@@ -20,89 +21,95 @@
     <link rel="apple-touch-icon" href="icon-512.png">
     <meta name="theme-color" content="#6105e8">
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+
     <style>
         /* Base */
         body, html {
             margin: 0; padding: 0; height: 100%; overflow: hidden;
             background-color: #6105e8; /* Fundo Roxo */
             font-family: 'Dancing Script', cursive;
+            -webkit-tap-highlight-color: transparent; /* Remove clique azul no mobile */
         }
 
-        /* --- TELA DE LOADING --- */
-        #loading-screen {
+        /* --- TELA DE LOADING E OFFLINE --- */
+        #loading-screen, #offline-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: #6105e8;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             z-index: 9999; transition: opacity 0.5s ease-out;
         }
 
-        /* Container geral da barra e caminhão */
-        .loading-progress-container {
-            width: 80%; max-width: 300px;
-            position: relative;
-            overflow: visible;
-            margin-top: 20px;
+        /* Tela Offline começa escondida */
+        #offline-screen {
+            display: none; z-index: 10000; /* Fica acima de tudo mesmo */
         }
 
-        /* O Caminhão (Wrapper que se move) */
+        /* Container da Barra */
+        .loading-progress-container {
+            width: 80%; max-width: 300px;
+            position: relative; overflow: visible; margin-top: 20px;
+        }
+
+        /* Caminhão */
         .truck-wrapper {
-            position: absolute;
-            top: -42px; 
-            left: 0;
-            z-index: 2;
+            position: absolute; top: -42px; left: 0; z-index: 2;
             animation: driveTruck 3.5s linear forwards; 
         }
-        
-        /* O Ícone SVG do caminhão (CORRIGIDO PARA NÃO CORTAR) */
         .truck-icon {
             height: 40px; width: 65px; overflow: visible;
             fill: white; display: block;
             animation: bounce 0.5s infinite alternate ease-in-out;
         }
 
-        /* O Trilho da Barra */
+        /* Barra e Texto */
         .progress-track {
             width: 100%; height: 6px;
             background-color: rgba(255, 255, 255, 0.3);
-            border-radius: 10px; overflow: hidden;
-            position: relative; z-index: 1;
+            border-radius: 10px; overflow: hidden; position: relative; z-index: 1;
         }
-
-        /* O Preenchimento Branco */
         .progress-fill {
             height: 100%; width: 0%; background-color: white; border-radius: 10px;
             animation: fillBar 3.5s linear forwards;
         }
-
-               /* Texto da Porcentagem */
         #progress-text {
-            color: white;
-            font-size: 1.5rem;
-            margin-top: 15px;
-            text-align: center;
-            width: 100%;
-            
-            /* AQUI ESTÁ A MUDANÇA: Fonte nova */
-            font-family: 'Poppins', sans-serif;
-            font-weight: 700; /* 700 deixa ela bem gordinha (Bold) */
+            color: white; font-size: 1.5rem; margin-top: 15px; text-align: center; width: 100%;
+            font-family: 'Poppins', sans-serif; font-weight: 700;
         }
 
-        /* --- ANIMAÇÕES --- */
+        /* Mensagem Offline */
+        .offline-message {
+            color: white; font-family: 'Poppins', sans-serif; font-size: 1.2rem;
+            text-align: center; margin-top: 20px; padding: 0 20px;
+        }
+
+        /* --- BOTÃO DE INSTALAR (Flutuante) --- */
+        #install-btn {
+            display: none; /* Começa escondido, o JS mostra se puder */
+            position: fixed;
+            bottom: 25px; right: 25px;
+            background-color: white;
+            color: #6105e8;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 20px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            cursor: pointer;
+            z-index: 5000;
+            align-items: center; gap: 8px;
+            animation: slideUp 1s ease-out;
+        }
+        #install-btn:active { transform: scale(0.95); }
+
+        /* Animações */
         @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-3px); } }
-        
-        @keyframes driveTruck {
-            0% { left: 0; }
-            90% { left: calc(95% - 60px); } 
-            100% { left: calc(95% - 60px); }
-        }
-        
-        @keyframes fillBar {
-            0% { width: 0%; }
-            90% { width: 95%; }
-            100% { width: 95%; }
-        }
+        @keyframes driveTruck { 0% { left: 0; } 90% { left: calc(95% - 60px); } 100% { left: calc(95% - 60px); } }
+        @keyframes fillBar { 0% { width: 0%; } 90% { width: 95%; } 100% { width: 95%; } }
+        @keyframes slideUp { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
         /* O App (Iframe) */
         iframe {
@@ -115,21 +122,27 @@
 <body>
 
     <div id="loading-screen">
-        
         <div class="loading-progress-container">
             <div class="truck-wrapper">
-                <svg class="truck-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
-                    <path d="M48 0C21.5 0 0 21.5 0 48V368c0 26.5 21.5 48 48 48H64c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288 256 237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zM416 160h50.7L544 237.3V256H416V160zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/>
-                </svg>
+                <svg class="truck-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M48 0C21.5 0 0 21.5 0 48V368c0 26.5 21.5 48 48 48H64c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288 256 237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zM416 160h50.7L544 237.3V256H416V160zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
             </div>
-            
-            <div class="progress-track">
-                <div class="progress-fill"></div>
-            </div>
-
+            <div class="progress-track"><div class="progress-fill"></div></div>
             <div id="progress-text">0%</div>
         </div>
     </div>
+
+    <div id="offline-screen">
+        <svg class="truck-icon" style="animation: none; margin-bottom: 20px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M48 0C21.5 0 0 21.5 0 48V368c0 26.5 21.5 48 48 48H64c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288 256 237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zM416 160h50.7L544 237.3V256H416V160zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
+        <div class="offline-message">
+            Sem conexão com a internet...<br>
+            <span style="font-size: 0.9rem; opacity: 0.8;">Aguardando sinal para reconectar.</span>
+        </div>
+    </div>
+
+    <button id="install-btn">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 12.293V.5A.5.5 0 0 1 8 0z"/></svg>
+        Instalar App
+    </button>
 
     <iframe id="app-frame" src="https://script.google.com/macros/s/AKfycbz9-TRx-SI_Z1m5bt3uZvpsNGZ3ithe8hsnu6SCcmqwUo9vBH5lQMD3Ih3Fqbp9ud3o/exec"></iframe>
 
@@ -138,20 +151,62 @@
 
         const iframe = document.getElementById('app-frame');
         const loadingScreen = document.getElementById('loading-screen');
+        const offlineScreen = document.getElementById('offline-screen');
         const progressText = document.getElementById('progress-text');
+        const installBtn = document.getElementById('install-btn');
         
         let horaQueSaiu = Date.now();
         let appCarregou = false;
+        let deferredPrompt; // Guarda o evento de instalação
+
+        // --- LÓGICA DE INSTALAÇÃO (PWA) ---
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Previne o Chrome de mostrar a barra padrão automaticamente
+            e.preventDefault();
+            deferredPrompt = e;
+            // Mostra nosso botão personalizado
+            installBtn.style.display = 'flex';
+        });
+
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    installBtn.style.display = 'none';
+                }
+                deferredPrompt = null;
+            }
+        });
+
+        // --- LÓGICA DE ONLINE / OFFLINE ---
+        function atualizarStatusRede() {
+            if (navigator.onLine) {
+                offlineScreen.style.display = 'none';
+                if (appCarregou) iframe.style.opacity = '1';
+            } else {
+                offlineScreen.style.display = 'flex';
+                iframe.style.opacity = '0';
+            }
+        }
+
+        window.addEventListener('online', () => {
+            atualizarStatusRede();
+            // Se a internet voltou, recarrega o app para garantir
+            iframe.src = iframe.src;
+        });
+        window.addEventListener('offline', () => {
+            atualizarStatusRede();
+        });
+
+        // --- LÓGICA DE CARREGAMENTO (Igual anterior) ---
         let percentCounter = 0;
         let percentInterval;
 
-        // Função para iniciar a contagem da porcentagem
         function startPercentage() {
             percentCounter = 0;
             progressText.innerText = "0%";
             clearInterval(percentInterval);
-            
-            // Conta até 99% em 3.5 segundos (sincronizado com CSS)
             percentInterval = setInterval(() => {
                 if (percentCounter < 99) {
                     percentCounter++;
@@ -159,7 +214,7 @@
                 } else {
                     clearInterval(percentInterval);
                 }
-            }, 35); // Aumenta 1% a cada 35ms
+            }, 35);
         }
 
         function esconderLoading() {
@@ -170,17 +225,20 @@
             }
         }
 
-        // Começa a contagem assim que abre
         startPercentage();
 
-        iframe.onload = function() { appCarregou = true; };
+        iframe.onload = function() { 
+            appCarregou = true;
+            // Se estiver online, mostra. Se não, espera.
+            if(navigator.onLine) esconderLoading();
+        };
 
         setTimeout(() => {
-            if(appCarregou) {
+            if(appCarregou && navigator.onLine) {
                 esconderLoading();
             } else {
                 let checarCarregamento = setInterval(() => {
-                    if(appCarregou) {
+                    if(appCarregou && navigator.onLine) {
                         esconderLoading();
                         clearInterval(checarCarregamento);
                     }
@@ -188,6 +246,7 @@
             }
         }, 2500);
 
+        // --- CRONÔMETRO DE INATIVIDADE ---
         document.addEventListener("visibilitychange", function() {
             if (document.visibilityState === "hidden") {
                 horaQueSaiu = Date.now();
@@ -197,15 +256,10 @@
                     appCarregou = false;
                     loadingScreen.style.display = 'flex';
                     setTimeout(() => { loadingScreen.style.opacity = '1'; }, 10);
-                    
-                    // Reinicia a barra e o texto visualmente
                     startPercentage(); 
-                    
-                    // Truque para reiniciar a animação CSS da barra e caminhão
                     const container = document.querySelector('.loading-progress-container');
                     const novoContainer = container.cloneNode(true);
                     container.parentNode.replaceChild(novoContainer, container);
-
                     iframe.style.opacity = '0';
                     iframe.src = iframe.src;
                     setTimeout(() => { esconderLoading(); }, 2500);
