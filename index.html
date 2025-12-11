@@ -2,12 +2,33 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ways</title>
+
     <link rel="manifest" href="manifest.json">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Ways">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="icon-512.png">
+
+    <meta name="theme-color" content="#7B38F6">
+
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; }
-        iframe { display: block; border: none; height: 100vh; width: 100vw; }
+        /* Define a cor de fundo da página igual à do ícone */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            background-color: #7B38F6; /* Cor roxa do ícone */
+        }
+        iframe {
+            display: block;
+            border: none;
+            height: 100vh;
+            width: 100vw;
+        }
     </style>
 </head>
 <body>
