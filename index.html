@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu WebApp</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+        iframe { display: block; border: none; height: 100vh; width: 100vw; }
+    </style>
+</head>
+<body>
+    <iframe src="https://script.google.com/macros/s/AKfycbxylA-80CT4o9MEqwTN99v9hWYEjX38VJJnx_cPrwRPWSCHaJ2i3LwueveT-Cd5Z60o/exec"></iframe>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js');
+        }
+    </script>
+</body>
+</html>
