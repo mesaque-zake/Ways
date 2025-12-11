@@ -183,12 +183,42 @@
         function atualizarStatusRede() {
             if (navigator.onLine) {
                 offlineScreen.style.display = 'none';
-                if (appCarregou) iframe.style.opacity = '1';
+                if (appCarregou) {
+                    iframe.style.opacity = '1';
+                    
+                    // O TRUQUE NOVO: Adiciona um timestamp para forçar reload real
+                    // Remove parâmetros antigos para não acumular lixo na URL
+                    let urlLimpa = iframe.src.split('?')[0]; 
+                    // Recarrega forçado
+                    iframe.src = urlLimpa + '?t=' + new Date().getTime();
+                }
             } else {
                 offlineScreen.style.display = 'flex';
                 iframe.style.opacity = '0';
             }
         }
+
+        window.addEventListener('online', () => {
+            // Mostra a tela de loading enquanto reconecta para não ficar piscando
+            if (appCarregou) {
+                loadingScreen.style.display = 'flex';
+                loadingScreen.style.opacity = '1';
+                
+                // Reinicia a animação da barra
+                startPercentage();
+                
+                atualizarStatusRede();
+                
+                // Aguarda um pouco antes de mostrar o app de novo
+                setTimeout(() => { esconderLoading(); }, 2500);
+            } else {
+                atualizarStatusRede();
+            }
+        });
+
+        window.addEventListener('offline', () => {
+            atualizarStatusRede();
+        });
 
         window.addEventListener('online', () => {
             atualizarStatusRede();
