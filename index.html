@@ -1,4 +1,4 @@
-   <!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -9,7 +9,6 @@
 
     <meta property="og:image" content="https://mesaque-zake.github.io/Ways/BannerMesa.png">
     <meta property="og:url" content="https://mesaque-zake.github.io/Ways/">
-    
     <meta property="og:title" content="Ways - Otimizador de Rotas">
     <meta property="og:description" content="O trajeto mais rápido na palma da sua mão. Vamos sair do papel e mudar nossos caminhos: Acesse o Ways!">
     <meta property="og:type" content="WebApp">
@@ -24,77 +23,70 @@
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pulltorefreshjs/0.1.22/pulltorefresh.min.js"></script>
+
     <style>
         /* Base */
         body, html {
             margin: 0; padding: 0; height: 100%;
-            background-color: #6105e8; /* Fundo Roxo */
+            background-color: #6105e8;
             font-family: 'Dancing Script', cursive;
             -webkit-tap-highlight-color: transparent;
-            /* Permitir scroll no body é necessário para o pull-to-refresh funcionar */
-            overflow-y: auto; 
-            /* Mas esconde a barra de rolagem para ficar bonito */
-            scrollbar-width: none; -ms-overflow-style: none;
+            overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none;
         }
         body::-webkit-scrollbar { display: none; }
 
-        /* --- TELA DE LOADING E OFFLINE --- */
+        /* TELA DE LOADING */
         #loading-screen, #offline-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: #6105e8;
             display: flex; flex-direction: column; 
-            /* Mudança aqui para posicionar o logo no final */
-            justify-content: space-between; 
+            justify-content: space-between; /* Distribui espaço entre topo, meio e fim */
             align-items: center;
             z-index: 9999; transition: opacity 0.5s ease-out;
-            padding-bottom: 30px; /* Espaço para o logo não colar na borda */
-            box-sizing: border-box;
+            padding-bottom: 40px; box-sizing: border-box;
         }
 
-        /* Área central do carregamento */
+        /* Conteúdo Central (Caminhão e Barra) */
         .loading-content {
             flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%;
         }
 
-        /* Seu Novo Logo no Rodapé */
+        /* Logo no Rodapé */
         .footer-logo {
-            width: 120px; /* Ajuste o tamanho conforme necessário */
-            height: auto;
-            opacity: 0.8; /* Um pouco transparente para ficar elegante */
+            width: 100px; /* Tamanho do logo */
+            height: auto; opacity: 0.9;
+            margin-bottom: 20px;
         }
 
-        /* Tela Offline */
-        #offline-screen { display: none; z-index: 10000; justify-content: center; }
-
-        /* Barra e Caminhão (Mantido igual) */
+        /* Container da Barra */
         .loading-progress-container { width: 80%; max-width: 300px; position: relative; overflow: visible; margin-top: 20px; }
+        
+        /* Caminhão */
         .truck-wrapper { position: absolute; top: -42px; left: 0; z-index: 2; animation: driveTruck 3.5s linear forwards; }
         .truck-icon { height: 40px; width: 65px; overflow: visible; fill: white; display: block; animation: bounce 0.5s infinite alternate ease-in-out; }
+        
+        /* Barra */
         .progress-track { width: 100%; height: 6px; background-color: rgba(255, 255, 255, 0.3); border-radius: 10px; overflow: hidden; position: relative; z-index: 1; }
         .progress-fill { height: 100%; width: 0%; background-color: white; border-radius: 10px; animation: fillBar 3.5s linear forwards; }
+        
+        /* Texto Porcentagem */
         #progress-text { color: white; font-size: 1.5rem; margin-top: 15px; text-align: center; width: 100%; font-family: 'Poppins', sans-serif; font-weight: 700; }
-        .offline-message { color: white; font-family: 'Poppins', sans-serif; font-size: 1.2rem; text-align: center; margin-top: 20px; padding: 0 20px; }
 
-        /* Botão de Instalar (Mantido igual) */
+        /* Offline e Botão */
+        #offline-screen { display: none; z-index: 10000; justify-content: center; }
+        .offline-message { color: white; font-family: 'Poppins', sans-serif; font-size: 1.2rem; text-align: center; margin-top: 20px; padding: 0 20px; }
         #install-btn { display: none; position: fixed; bottom: 25px; right: 25px; background-color: white; color: #6105e8; border: none; border-radius: 50px; padding: 12px 20px; font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: pointer; z-index: 5000; align-items: center; gap: 8px; animation: slideUp 1s ease-out; }
-        #install-btn:active { transform: scale(0.95); }
 
         /* Animações */
         @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-3px); } }
         @keyframes driveTruck { 0% { left: 0; } 90% { left: calc(95% - 60px); } 100% { left: calc(95% - 60px); } }
         @keyframes fillBar { 0% { width: 0%; } 90% { width: 95%; } 100% { width: 95%; } }
         @keyframes slideUp { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        /* Spin para o ícone de puxar */
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* O App (Iframe) - Ajustado para permitir o pull-to-refresh */
-        iframe {
-            display: block; border: none; width: 100vw;
-            /* Altura ajustada para não bloquear o scroll do body */
-            height: calc(100vh - 1px); 
-            background-color: #6105e8; opacity: 0; position: relative; z-index: 1;
-            transition: opacity 0.8s ease-in;
-        }
-        
-        /* Estilo do ícone de puxar (ptr) */
+        iframe { display: block; border: none; width: 100vw; height: calc(100vh - 1px); background-color: #6105e8; opacity: 0; position: relative; z-index: 1; transition: opacity 0.8s ease-in; }
         .ptr--icon { color: white !important; }
     </style>
 </head>
@@ -110,12 +102,11 @@
                 <div id="progress-text">0%</div>
             </div>
         </div>
-        
         <img src="MesaLogo.png" alt="Logo" class="footer-logo">
     </div>
 
     <div id="offline-screen">
-        <svg class="truck-icon" style="animation: none; margin-bottom: 20px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M48 0C21.5 0 0 21.5 0 48V368c0 26.5 21.5 48 48 48H64c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288 256 237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zM416 160h50.7L544 237.3V256H416V160zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
+        <svg class="truck-icon" style="animation: none; margin-bottom: 20px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M48 0C21.5 0 0 21.5 0 48V368c0 26.5 21.5 48 48 48H64c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288 256 237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zM416 160h50.7L544 237.3V256H416V160zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
         <div class="offline-message">
             Sem conexão com a internet...<br>
             <span style="font-size: 0.9rem; opacity: 0.8;">Aguardando sinal para reconectar.</span>
@@ -132,62 +123,108 @@
     </div>
 
     <script>
-        if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js'); }
-
+        // --- 1. ELEMENTOS CRITICOS (Definidos primeiro para não dar erro) ---
         const iframe = document.getElementById('app-frame');
         const loadingScreen = document.getElementById('loading-screen');
         const offlineScreen = document.getElementById('offline-screen');
         const progressText = document.getElementById('progress-text');
         const installBtn = document.getElementById('install-btn');
-        
-        let horaQueSaiu = Date.now();
         let appCarregou = false;
-        let deferredPrompt;
+        let percentInterval;
 
-        // --- CONFIGURAÇÃO DO PULL-TO-REFRESH (NOVO) ---
-        PullToRefresh.init({
-            mainElement: '#app-wrapper', // Onde o usuário puxa
-            triggerElement: '#app-wrapper',
-            onRefresh: function() {
-                // O que acontece quando puxa: Recarrega forçado
-                console.log("Puxou para recarregar!");
-                forcartRecarregamento();
-            },
-            distThreshold: 70, // Distância para puxar
-            iconArrow: '<svg width="24" height="24" fill="white" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/><path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/></svg>',
-            iconRefreshing: '<svg width="24" height="24" fill="white" viewBox="0 0 16 16" style="animation: spin 1s linear infinite;"><path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/><path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/></svg>',
-            instructionsPullToRefresh: "Puxe para recarregar",
-            instructionsReleaseToRefresh: "Solte para recarregar",
-            instructionsRefreshing: "Recarregando..."
-        });
-        // Adiciona animação de spin no CSS para o ícone
-        const style = document.createElement('style');
-        style.innerHTML = '@keyframes spin { 100% { transform: rotate(360deg); } }';
-        document.head.appendChild(style);
+        // --- 2. FUNÇÕES VISUAIS (Rodam independente de bibliotecas externas) ---
+        function startPercentage() {
+            let percentCounter = 0;
+            progressText.innerText = "0%";
+            clearInterval(percentInterval);
+            percentInterval = setInterval(() => {
+                if (percentCounter < 99) {
+                    percentCounter++;
+                    progressText.innerText = percentCounter + "%";
+                } else {
+                    clearInterval(percentInterval);
+                }
+            }, 35);
+        }
 
-        // Função centralizada para forçar o recarregamento
+        function esconderLoading() {
+            // Só esconde se realmente estiver carregado
+            if (appCarregou) {
+                loadingScreen.style.opacity = '0';
+                iframe.style.opacity = '1';
+                setTimeout(() => { loadingScreen.style.display = 'none'; }, 500);
+            }
+        }
+
+        // INICIA A ANIMAÇÃO IMEDIATAMENTE (Não espera nada)
+        startPercentage();
+
+        // --- 3. TENTATIVA DE INICIAR O PULL-TO-REFRESH ---
+        // Envolvemos em try/catch. Se falhar, o app continua funcionando sem ele.
+        try {
+            if (typeof PullToRefresh !== 'undefined') {
+                PullToRefresh.init({
+                    mainElement: '#app-wrapper',
+                    triggerElement: '#app-wrapper',
+                    onRefresh: function() {
+                        forcartRecarregamento();
+                    },
+                    distThreshold: 70,
+                    iconArrow: '<svg width="24" height="24" fill="white" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/><path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/></svg>',
+                    iconRefreshing: '<svg width="24" height="24" fill="white" viewBox="0 0 16 16" style="animation: spin 1s linear infinite;"><path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/><path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/></svg>',
+                    instructionsPullToRefresh: "Puxe para recarregar",
+                    instructionsReleaseToRefresh: "Solte para recarregar",
+                    instructionsRefreshing: "Recarregando..."
+                });
+            } else {
+                console.warn("Biblioteca PullToRefresh não carregou, mas tudo bem.");
+            }
+        } catch (e) {
+            console.error("Erro no PullToRefresh:", e);
+        }
+
+        // --- 4. LÓGICA DE CARREGAMENTO ---
         function forcartRecarregamento() {
             if (navigator.onLine) {
                 appCarregou = false;
                 loadingScreen.style.display = 'flex';
                 setTimeout(() => { loadingScreen.style.opacity = '1'; }, 10);
-                iframe.style.opacity = '0';
+                
                 startPercentage();
                 
-                // Reseta animação da barra
+                // Reseta animação CSS
                 const container = document.querySelector('.loading-progress-container');
                 const novoContainer = container.cloneNode(true);
                 container.parentNode.replaceChild(novoContainer, container);
                 
-                // Reload com timestamp
                 let urlLimpa = iframe.src.split('?')[0];
                 iframe.src = urlLimpa + '?t=' + new Date().getTime();
                 
-                setTimeout(() => { esconderLoading(); }, 2500);
+                setTimeout(() => { 
+                    if(appCarregou) esconderLoading(); 
+                }, 2500);
             }
         }
 
-        // --- LÓGICA DE INSTALAÇÃO ---
+        iframe.onload = function() { 
+            console.log("Iframe carregado!");
+            appCarregou = true;
+            if(navigator.onLine) esconderLoading();
+        };
+
+        // TRAVA DE SEGURANÇA: Se em 10 segundos não abrir, abre na marra
+        setTimeout(() => {
+            if (!appCarregou && navigator.onLine) {
+                console.log("Demorou muito, forçando abertura...");
+                appCarregou = true;
+                esconderLoading();
+            }
+        }, 10000);
+
+        // --- 5. LÓGICA DE SERVIÇO E REDE ---
+        if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js'); }
+
+        let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault(); deferredPrompt = e; installBtn.style.display = 'flex';
         });
@@ -200,7 +237,6 @@
             }
         });
 
-        // --- LÓGICA ONLINE/OFFLINE ---
         function atualizarStatusRede() {
             if (navigator.onLine) {
                 offlineScreen.style.display = 'none';
@@ -212,40 +248,6 @@
         }
         window.addEventListener('online', atualizarStatusRede);
         window.addEventListener('offline', atualizarStatusRede);
-
-        // --- LOADING ---
-        let percentCounter = 0; let percentInterval;
-        function startPercentage() {
-            percentCounter = 0; progressText.innerText = "0%"; clearInterval(percentInterval);
-            percentInterval = setInterval(() => {
-                if (percentCounter < 99) { percentCounter++; progressText.innerText = percentCounter + "%"; } 
-                else { clearInterval(percentInterval); }
-            }, 35);
-        }
-        function esconderLoading() {
-            if (appCarregou) {
-                loadingScreen.style.opacity = '0'; iframe.style.opacity = '1';
-                setTimeout(() => { loadingScreen.style.display = 'none'; }, 500);
-            }
-        }
-        startPercentage();
-        iframe.onload = function() { appCarregou = true; };
-        setTimeout(() => {
-            if(appCarregou && navigator.onLine) { esconderLoading(); } 
-            else {
-                let checar = setInterval(() => {
-                    if(appCarregou && navigator.onLine) { esconderLoading(); clearInterval(checar); }
-                }, 500);
-            }
-        }, 2500);
-
-        // --- CRONÔMETRO ---
-        document.addEventListener("visibilitychange", function() {
-            if (document.visibilityState === "hidden") { horaQueSaiu = Date.now(); } 
-            else if (document.visibilityState === "visible") {
-                if ((Date.now() - horaQueSaiu) / 1000 > 600) forcartRecarregamento();
-            }
-        });
     </script>
 </body>
 </html>
