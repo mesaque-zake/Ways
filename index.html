@@ -30,29 +30,36 @@
         body, html {
             margin: 0; padding: 0; height: 100%;
             background-color: #6105e8;
-            font-family: 'Poppins', sans-serif; /* Padrão agora é Poppins */
+            font-family: 'Poppins', sans-serif;
             -webkit-tap-highlight-color: transparent;
             overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none;
         }
         body::-webkit-scrollbar { display: none; }
 
-        /* --- TELAS (Loading, Offline, Seleção) --- */
+        /* --- ESTRUTURA DAS TELAS --- */
         #selection-screen, #loading-screen, #offline-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: #6105e8;
             display: flex; flex-direction: column; 
-            align-items: center; justify-content: center;
+            justify-content: space-between;
+            align-items: center;
             z-index: 9999; transition: opacity 0.5s ease-out;
             box-sizing: border-box;
+            padding-bottom: 20px;
         }
 
-        /* --- TELA DE SELEÇÃO (Bem vindo) --- */
-        #selection-screen { z-index: 10001; padding: 20px; justify-content: center; }
+        /* --- WRAPPER DE CONTEÚDO --- */
+        .content-wrapper {
+            flex-grow: 1; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; width: 100%;
+        }
+
+        /* --- TELA DE SELEÇÃO --- */
+        #selection-screen { z-index: 10001; padding: 20px; }
         
         .welcome-text { color: white; font-size: 1.2rem; margin-bottom: -10px; opacity: 0.9; }
         .brand-text { font-family: 'Dancing Script', cursive; color: white; font-size: 4rem; margin-bottom: 40px; }
 
-        /* Estilo do Select (Dropdown) */
         .unit-select-wrapper { width: 100%; max-width: 300px; margin-bottom: 20px; }
         select {
             width: 100%; padding: 15px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.3);
@@ -63,15 +70,9 @@
         }
         select option { background-color: #6105e8; color: white; }
 
-        /* Checkbox Lembrar */
-        .remember-container {
-            display: flex; align-items: center; color: white; font-size: 0.9rem; margin-bottom: 30px; cursor: pointer;
-        }
-        .remember-checkbox {
-            width: 18px; height: 18px; margin-right: 10px; accent-color: white; cursor: pointer;
-        }
+        .remember-container { display: flex; align-items: center; color: white; font-size: 0.9rem; margin-bottom: 30px; cursor: pointer; }
+        .remember-checkbox { width: 18px; height: 18px; margin-right: 10px; accent-color: white; cursor: pointer; }
 
-        /* Botão Entrar */
         .enter-btn {
             background-color: white; color: #6105e8; border: none; padding: 12px 50px;
             border-radius: 50px; font-weight: 700; font-size: 1rem; cursor: pointer;
@@ -80,36 +81,21 @@
         .enter-btn:active { transform: scale(0.95); }
 
         /* --- TELA DE LOADING --- */
-        #loading-screen { justify-content: space-between; padding-bottom: 40px; }
-        .loading-content { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; }
-        
         .footer-logo { width: 100px; height: auto; opacity: 0.9; margin-bottom: 10px; }
-        
-        /* Botão Trocar Unidade (Discreto) */
-        .switch-unit-link {
-            color: rgba(255,255,255,0.7); font-size: 0.85rem; text-decoration: underline;
-            cursor: pointer; margin-top: 5px; margin-bottom: 20px;
-        }
-
-        /* Elementos Visuais do Loading */
+        .switch-unit-link { color: rgba(255,255,255,0.7); font-size: 0.85rem; text-decoration: underline; cursor: pointer; margin-top: 5px; margin-bottom: 20px; }
         .loading-progress-container { width: 80%; max-width: 300px; position: relative; overflow: visible; margin-top: 20px; }
         .truck-wrapper { position: absolute; top: -42px; left: 0; z-index: 2; animation: driveTruck 3.5s linear forwards; }
         .truck-icon { height: 40px; width: 65px; overflow: visible; fill: white; display: block; animation: bounce 0.5s infinite alternate ease-in-out; }
         .progress-track { width: 100%; height: 6px; background-color: rgba(255, 255, 255, 0.3); border-radius: 10px; overflow: hidden; position: relative; z-index: 1; }
         .progress-fill { height: 100%; width: 0%; background-color: white; border-radius: 10px; animation: fillBar 3.5s linear forwards; }
         #progress-text { color: white; font-size: 1.5rem; margin-top: 15px; text-align: center; width: 100%; font-weight: 700; }
-        
-        /* Texto Dinâmico de Conexão */
-        #connection-status {
-            color: white; font-size: 0.9rem; margin-top: 25px; opacity: 0.9; text-align: center;
-        }
+        #connection-status { color: white; font-size: 0.9rem; margin-top: 25px; opacity: 0.9; text-align: center; }
 
         /* --- OUTROS --- */
         #offline-screen { display: none; z-index: 10002; justify-content: center; }
         .offline-message { color: white; font-size: 1.2rem; text-align: center; margin-top: 20px; padding: 0 20px; }
         #install-btn { display: none; position: fixed; bottom: 25px; right: 25px; background-color: white; color: #6105e8; border: none; border-radius: 50px; padding: 12px 20px; font-weight: 700; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: pointer; z-index: 5000; align-items: center; gap: 8px; animation: slideUp 1s ease-out; }
 
-        /* Animações */
         @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-3px); } }
         @keyframes driveTruck { 0% { left: 0; } 90% { left: calc(95% - 60px); } 100% { left: calc(95% - 60px); } }
         @keyframes fillBar { 0% { width: 0%; } 90% { width: 95%; } 100% { width: 95%; } }
@@ -123,29 +109,30 @@
 <body>
 
     <div id="selection-screen">
-        <div class="welcome-text">Bem vindo ao</div>
-        <div class="brand-text">Ways</div>
-
-        <div class="unit-select-wrapper">
-            <select id="unit-select">
-                <option value="" disabled selected>Selecione sua Unidade</option>
-                <option value="itaquera">Itaquera</option>
-                <option value="carmo">Carmo</option>
-                <option value="interlagos">Interlagos</option>
-                <option value="campolimpo">Campo Limpo</option>
-                <option value="cecam">CECAM</option>
-            </select>
+        <div class="content-wrapper">
+            <div class="welcome-text">Bem vindo ao</div>
+            <div class="brand-text">Ways</div>
+            <div class="unit-select-wrapper">
+                <select id="unit-select">
+                    <option value="" disabled selected>Selecione sua Unidade</option>
+                    <option value="itaquera">Itaquera</option>
+                    <option value="carmo">Carmo</option>
+                    <option value="interlagos">Interlagos</option>
+                    <option value="campolimpo">Campo Limpo</option>
+                    <option value="cecam">CECAM</option>
+                </select>
+            </div>
+            <label class="remember-container">
+                <input type="checkbox" id="remember-check" class="remember-checkbox">
+                Lembrar minha escolha
+            </label>
+            <button class="enter-btn" onclick="confirmarUnidade()">ACESSAR</button>
         </div>
-
-        <label class="remember-container">
-            <input type="checkbox" id="remember-check" class="remember-checkbox">
-            Lembrar minha escolha
-        </label>
-
-        <button class="enter-btn" onclick="confirmarUnidade()">ACESSAR</button>
+        <img src="MesaLogo.png" alt="Logo" class="footer-logo">
     </div>
 
-    <div id="loading-screen" style="display: none;"> <div class="loading-content">
+    <div id="loading-screen" style="display: none;"> 
+        <div class="content-wrapper">
             <div class="loading-progress-container">
                 <div class="truck-wrapper">
                     <svg class="truck-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M48 0C21.5 0 0 21.5 0 48V368c0 26.5 21.5 48 48 48H64c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288 256 237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zM416 160h50.7L544 237.3V256H416V160zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
@@ -153,10 +140,8 @@
                 <div class="progress-track"><div class="progress-fill"></div></div>
                 <div id="progress-text">0%</div>
             </div>
-            
             <div id="connection-status">Iniciando...</div>
         </div>
-        
         <div style="display: flex; flex-direction: column; align-items: center;">
             <img src="MesaLogo.png" alt="Logo" class="footer-logo">
             <div class="switch-unit-link" onclick="resetarEscolha()">(Trocar Unidade)</div>
@@ -181,8 +166,7 @@
     </div>
 
     <script>
-        // --- 0. CONFIGURAÇÃO DAS UNIDADES (O CÉREBRO) ---
-        // Quando criar os novos apps, cole os links aqui dentro das aspas!
+        // 1. DEFINIÇÕES E VARIÁVEIS (Tudo aqui em cima para não dar erro)
         const UNIDADES = {
             itaquera: "https://script.google.com/macros/s/AKfycbxCBBGZ4Cskn4gJtei_5iO8WL_4sdOkC3OI1WiJX8MibvRUj6xSXFVVHM39lA1_urUy/exec",
             carmo: "",
@@ -190,7 +174,6 @@
             campolimpo: "",
             cecam: "https://script.google.com/macros/s/AKfycbxAS6lCfHAJ0Vsw1wRt9Kups9uQ1mLp5o0jA8dHd31jFZDzvmEg8Qg2UPi3-G3o06U/exec"
         };
-
         const NOMES_BONITOS = {
             itaquera: "Itaquera",
             carmo: "Carmo",
@@ -199,99 +182,21 @@
             cecam: "CECAM"
         };
 
-        // Elementos
         const selectionScreen = document.getElementById('selection-screen');
         const loadingScreen = document.getElementById('loading-screen');
+        const offlineScreen = document.getElementById('offline-screen');
         const unitSelect = document.getElementById('unit-select');
         const rememberCheck = document.getElementById('remember-check');
         const connectionStatus = document.getElementById('connection-status');
+        const progressText = document.getElementById('progress-text');
+        const installBtn = document.getElementById('install-btn');
         const iframe = document.getElementById('app-frame');
         
         let urlAtual = "";
-
-        // --- 1. VERIFICAÇÃO DE MEMÓRIA (AO ABRIR) ---
-        function verificarMemoria() {
-            const unidadeSalva = localStorage.getItem('ways_unidade_salva');
-            
-            if (unidadeSalva && UNIDADES[unidadeSalva]) {
-                // Se tem memória, pula a seleção
-                iniciarSistema(unidadeSalva);
-            } else {
-                // Se não tem, mostra a tela de seleção (que já está visível por padrão)
-            }
-        }
-
-        // --- 2. AÇÃO DO BOTÃO "ACESSAR" ---
-        function confirmarUnidade() {
-            const escolha = unitSelect.value;
-            
-            if (!escolha) {
-                alert("Por favor, selecione uma unidade.");
-                return;
-            }
-
-            // Verifica se o link existe (Proteção Em Construção)
-            if (UNIDADES[escolha] === "") {
-                alert("🚧 A unidade " + NOMES_BONITOS[escolha] + " está em construção!");
-                return;
-            }
-
-            // Salva na memória SE a caixa estiver marcada
-            if (rememberCheck.checked) {
-                localStorage.setItem('ways_unidade_salva', escolha);
-            } else {
-                // Se desmarcou, garante que limpa qualquer memória antiga
-                localStorage.removeItem('ways_unidade_salva');
-            }
-
-            iniciarSistema(escolha);
-        }
-
-        // --- 3. INICIAR O SISTEMA (Transição e Load) ---
-        function iniciarSistema(chaveUnidade) {
-            // Atualiza texto de status
-            connectionStatus.innerText = "Conectando à unidade " + NOMES_BONITOS[chaveUnidade] + "...";
-            
-            // Define a URL global
-            urlAtual = UNIDADES[chaveUnidade];
-
-            // Some com a seleção, mostra o loading
-            selectionScreen.style.opacity = '0';
-            setTimeout(() => { selectionScreen.style.display = 'none'; }, 500);
-            
-            loadingScreen.style.display = 'flex';
-            
-            // Inicia animações e carrega o iframe
-            startPercentage();
-            
-            // Carrega o link no iframe
-            iframe.src = urlAtual;
-        }
-
-        // --- 4. FUNÇÃO DE RESET (TROCAR UNIDADE) ---
-        function resetarEscolha() {
-            // Limpa a memória
-            localStorage.removeItem('ways_unidade_salva');
-            
-            // Recarrega a página para voltar ao estado zero
-            window.location.reload();
-        }
-
-        // Rodar verificação ao iniciar
-        verificarMemoria();
-
-
-        // =========================================================
-        // DAQUI PRA BAIXO É O CÓDIGO TÉCNICO QUE JÁ TINHAMOS
-        // (Loading, Pull-to-refresh, Offline, etc)
-        // =========================================================
-
-        const offlineScreen = document.getElementById('offline-screen');
-        const progressText = document.getElementById('progress-text');
-        const installBtn = document.getElementById('install-btn');
         let appCarregou = false;
         let percentInterval;
 
+        // 2. FUNÇÕES AUXILIARES (Definidas antes de serem usadas)
         function startPercentage() {
             let percentCounter = 0;
             progressText.innerText = "0%";
@@ -314,6 +219,62 @@
             }
         }
 
+        function forcartRecarregamento() {
+            if (navigator.onLine && urlAtual) {
+                appCarregou = false;
+                loadingScreen.style.display = 'flex';
+                setTimeout(() => { loadingScreen.style.opacity = '1'; }, 10);
+                startPercentage();
+                
+                // Reinicia a barra (Clone Node)
+                const container = document.querySelector('.loading-progress-container');
+                const novoContainer = container.cloneNode(true);
+                container.parentNode.replaceChild(novoContainer, container);
+                
+                let limpa = urlAtual.split('?')[0];
+                iframe.src = limpa + '?t=' + new Date().getTime();
+                
+                setTimeout(() => { if(appCarregou) esconderLoading(); }, 2500);
+            }
+        }
+
+        function iniciarSistema(chaveUnidade) {
+            connectionStatus.innerText = "Conectando à unidade " + NOMES_BONITOS[chaveUnidade] + "...";
+            urlAtual = UNIDADES[chaveUnidade];
+
+            selectionScreen.style.opacity = '0';
+            setTimeout(() => { selectionScreen.style.display = 'none'; }, 500);
+            
+            loadingScreen.style.display = 'flex';
+            startPercentage();
+            iframe.src = urlAtual;
+        }
+
+        function confirmarUnidade() {
+            const escolha = unitSelect.value;
+            if (!escolha) { alert("Por favor, selecione uma unidade."); return; }
+            if (UNIDADES[escolha] === "") { alert("🚧 A unidade " + NOMES_BONITOS[escolha] + " está em construção!"); return; }
+
+            if (rememberCheck.checked) { localStorage.setItem('ways_unidade_salva', escolha); } 
+            else { localStorage.removeItem('ways_unidade_salva'); }
+
+            iniciarSistema(escolha);
+        }
+
+        function resetarEscolha() {
+            localStorage.removeItem('ways_unidade_salva');
+            window.location.reload();
+        }
+
+        // 3. EVENTOS (Listeners)
+        iframe.onload = function() { 
+            if(iframe.src && iframe.src !== window.location.href) {
+                appCarregou = true;
+                if(navigator.onLine) esconderLoading();
+            }
+        };
+
+        // Pull To Refresh
         try {
             if (typeof PullToRefresh !== 'undefined') {
                 PullToRefresh.init({
@@ -328,46 +289,22 @@
             }
         } catch (e) { console.error(e); }
 
-        function forcartRecarregamento() {
-            if (navigator.onLine && urlAtual) {
-                appCarregou = false;
-                loadingScreen.style.display = 'flex';
-                setTimeout(() => { loadingScreen.style.opacity = '1'; }, 10);
-                startPercentage();
-                const container = document.querySelector('.loading-progress-container');
-                const novoContainer = container.cloneNode(true);
-                container.parentNode.replaceChild(novoContainer, container);
-                
-                // Usa a URL Atual da unidade selecionada
-                let limpa = urlAtual.split('?')[0];
-                iframe.src = limpa + '?t=' + new Date().getTime();
-                
-                setTimeout(() => { if(appCarregou) esconderLoading(); }, 2500);
-            }
-        }
-
-        iframe.onload = function() { 
-            // Só consideramos carregado se tiver uma URL válida (não vazio)
-            if(iframe.src && iframe.src !== window.location.href) {
-                appCarregou = true;
-                if(navigator.onLine) esconderLoading();
-            }
-        };
-
+        // Trava de Segurança (10s)
         setTimeout(() => {
-            if (!appCarregou && navigator.onLine && urlAtual) {
-                appCarregou = true; esconderLoading();
-            }
+            if (!appCarregou && navigator.onLine && urlAtual) { appCarregou = true; esconderLoading(); }
         }, 10000);
 
+        // Service Worker
         if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js'); }
 
+        // Instalação PWA
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; installBtn.style.display = 'flex'; });
         installBtn.addEventListener('click', async () => {
             if (deferredPrompt) { deferredPrompt.prompt(); const { outcome } = await deferredPrompt.userChoice; if (outcome === 'accepted') installBtn.style.display = 'none'; deferredPrompt = null; }
         });
 
+        // Online/Offline
         function atualizarStatusRede() {
             if (navigator.onLine) {
                 offlineScreen.style.display = 'none';
@@ -377,6 +314,7 @@
         window.addEventListener('online', atualizarStatusRede);
         window.addEventListener('offline', atualizarStatusRede);
         
+        // Cronômetro de Inatividade
         let horaQueSaiu = Date.now();
         document.addEventListener("visibilitychange", function() {
             if (document.visibilityState === "hidden") { horaQueSaiu = Date.now(); } 
@@ -384,6 +322,16 @@
                 if ((Date.now() - horaQueSaiu) / 1000 > 600 && urlAtual) forcartRecarregamento();
             }
         });
+
+        // 4. INICIALIZAÇÃO (Agora sim, rodamos a verificação por último!)
+        function verificarMemoria() {
+            const unidadeSalva = localStorage.getItem('ways_unidade_salva');
+            if (unidadeSalva && UNIDADES[unidadeSalva]) {
+                iniciarSistema(unidadeSalva);
+            }
+        }
+        
+        verificarMemoria(); // Chama a função apenas no final de tudo
     </script>
 </body>
 </html>
