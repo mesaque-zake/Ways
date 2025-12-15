@@ -48,18 +48,16 @@
             padding-bottom: 20px;
         }
 
-        /* --- WRAPPER DE CONTEÚDO --- */
+        /* Wrapper Central */
         .content-wrapper {
             flex-grow: 1; display: flex; flex-direction: column; 
             justify-content: center; align-items: center; width: 100%;
         }
 
-        /* --- TELA DE SELEÇÃO --- */
+        /* Tela de Seleção */
         #selection-screen { z-index: 10001; padding: 20px; }
-        
         .welcome-text { color: white; font-size: 1.2rem; margin-bottom: -10px; opacity: 0.9; }
         .brand-text { font-family: 'Dancing Script', cursive; color: white; font-size: 4rem; margin-bottom: 40px; }
-
         .unit-select-wrapper { width: 100%; max-width: 300px; margin-bottom: 20px; }
         select {
             width: 100%; padding: 15px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.3);
@@ -69,10 +67,8 @@
             background-repeat: no-repeat; background-position: right 15px top 50%; background-size: 12px auto;
         }
         select option { background-color: #6105e8; color: white; }
-
         .remember-container { display: flex; align-items: center; color: white; font-size: 0.9rem; margin-bottom: 30px; cursor: pointer; }
         .remember-checkbox { width: 18px; height: 18px; margin-right: 10px; accent-color: white; cursor: pointer; }
-
         .enter-btn {
             background-color: white; color: #6105e8; border: none; padding: 12px 50px;
             border-radius: 50px; font-weight: 700; font-size: 1rem; cursor: pointer;
@@ -80,7 +76,7 @@
         }
         .enter-btn:active { transform: scale(0.95); }
 
-        /* --- TELA DE LOADING --- */
+        /* Tela de Loading */
         .footer-logo { width: 100px; height: auto; opacity: 0.9; margin-bottom: 10px; }
         .switch-unit-link { color: rgba(255,255,255,0.7); font-size: 0.85rem; text-decoration: underline; cursor: pointer; margin-top: 5px; margin-bottom: 20px; }
         .loading-progress-container { width: 80%; max-width: 300px; position: relative; overflow: visible; margin-top: 20px; }
@@ -91,21 +87,18 @@
         #progress-text { color: white; font-size: 1.5rem; margin-top: 15px; text-align: center; width: 100%; font-weight: 700; }
         #connection-status { color: white; font-size: 0.9rem; margin-top: 25px; opacity: 0.9; text-align: center; }
 
-        /* --- OUTROS --- */
+        /* Modal e Offline */
         #offline-screen { display: none; z-index: 10002; justify-content: center; }
         .offline-message { color: white; font-size: 1.2rem; text-align: center; margin-top: 20px; padding: 0 20px; }
         #install-btn { display: none; position: fixed; bottom: 25px; right: 25px; background-color: white; color: #6105e8; border: none; border-radius: 50px; padding: 12px 20px; font-weight: 700; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: pointer; z-index: 5000; align-items: center; gap: 8px; animation: slideUp 1s ease-out; }
 
-        /* --- MODAL DE CONSTRUÇÃO (POP-UP) --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.6); /* Fundo escuro transparente */
-            z-index: 20000; /* Fica acima de tudo */
+            background-color: rgba(0, 0, 0, 0.6); z-index: 20000;
             display: flex; justify-content: center; align-items: center;
             opacity: 0; visibility: hidden; transition: opacity 0.3s ease;
         }
         .modal-overlay.active { opacity: 1; visibility: visible; }
-        
         .modal-box {
             background-color: white; width: 85%; max-width: 320px;
             border-radius: 20px; padding: 30px 20px;
@@ -113,19 +106,12 @@
             transform: scale(0.8); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .modal-overlay.active .modal-box { transform: scale(1); }
-
         .modal-icon { font-size: 3rem; margin-bottom: 15px; display: block; }
         .modal-title { color: #6105e8; font-size: 1.4rem; font-weight: 700; margin-bottom: 10px; font-family: 'Poppins', sans-serif; }
         .modal-text { color: #555; font-size: 0.95rem; margin-bottom: 25px; line-height: 1.5; }
-        
-        .modal-btn {
-            background-color: #6105e8; color: white; border: none; padding: 12px 30px;
-            border-radius: 50px; font-weight: 600; font-size: 1rem; cursor: pointer;
-            width: 100%;
-        }
+        .modal-btn { background-color: #6105e8; color: white; border: none; padding: 12px 30px; border-radius: 50px; font-weight: 600; font-size: 1rem; cursor: pointer; width: 100%; }
         .modal-btn:active { background-color: #4a04b0; transform: scale(0.98); }
 
-        /* Animações */
         @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-3px); } }
         @keyframes driveTruck { 0% { left: 0; } 90% { left: calc(95% - 60px); } 100% { left: calc(95% - 60px); } }
         @keyframes fillBar { 0% { width: 0%; } 90% { width: 95%; } 100% { width: 95%; } }
@@ -205,13 +191,13 @@
     </div>
 
     <script>
-        // 1. DEFINIÇÕES
+        // 1. DEFINIÇÕES GLOBAIS
         const UNIDADES = {
-            itaquera: "https://script.google.com/macros/s/AKfycbzpsTWdQK5K1h7wzWOJbcMtoYUmwkLRu171qbf1RSEb6qDEz5bEM_e3uvne0m01KEYs/exec",
+            itaquera: "https://script.google.com/macros/s/AKfycbxCBBGZ4Cskn4gJtei_5iO8WL_4sdOkC3OI1WiJX8MibvRUj6xSXFVVHM39lA1_urUy/exec",
             carmo: "",
             interlagos: "",
             campolimpo: "",
-            cecam: "https://script.google.com/macros/s/AKfycbyxlrK1vuSQr5XnvBbfiRBHmrfdmwXX9TVihQAKyxTD7Im2EhIzmmcmQWQABodEUIJN/exec"
+            cecam: "https://script.google.com/macros/s/AKfycbxAS6lCfHAJ0Vsw1wRt9Kups9uQ1mLp5o0jA8dHd31jFZDzvmEg8Qg2UPi3-G3o06U/exec"
         };
         const NOMES_BONITOS = {
             itaquera: "Itaquera",
@@ -231,7 +217,6 @@
         const installBtn = document.getElementById('install-btn');
         const iframe = document.getElementById('app-frame');
         
-        // Elementos do Modal
         const customModal = document.getElementById('custom-modal');
         const modalMsg = document.getElementById('modal-msg');
         
@@ -239,18 +224,14 @@
         let appCarregou = false;
         let percentInterval;
 
-        // 2. FUNÇÕES AUXILIARES
+        // 2. FUNÇÕES LÓGICAS
         function startPercentage() {
             let percentCounter = 0;
             progressText.innerText = "0%";
             clearInterval(percentInterval);
             percentInterval = setInterval(() => {
-                if (percentCounter < 99) {
-                    percentCounter++;
-                    progressText.innerText = percentCounter + "%";
-                } else {
-                    clearInterval(percentInterval);
-                }
+                if (percentCounter < 99) { percentCounter++; progressText.innerText = percentCounter + "%"; } 
+                else { clearInterval(percentInterval); }
             }, 35);
         }
 
@@ -292,32 +273,20 @@
             iframe.src = urlAtual;
         }
 
-        // --- CONTROLE DO MODAL ---
         function abrirModal(unidadeNome) {
             modalMsg.innerText = "A unidade " + unidadeNome + " ainda está em construção. Em breve estará disponível!";
             customModal.classList.add('active');
         }
+        function fecharModal() { customModal.classList.remove('active'); }
 
-        function fecharModal() {
-            customModal.classList.remove('active');
-        }
-
-        // --- AÇÃO DE CONFIRMAR ---
         function confirmarUnidade() {
             const escolha = unitSelect.value;
-            
             if (!escolha) { 
-                // Reutilizando o modal para aviso de erro de seleção também, fica chique
                 modalMsg.innerText = "Por favor, selecione uma unidade na lista para continuar.";
                 customModal.classList.add('active');
                 return; 
             }
-
-            // Verifica se está vazio
-            if (UNIDADES[escolha] === "") { 
-                abrirModal(NOMES_BONITOS[escolha]);
-                return; 
-            }
+            if (UNIDADES[escolha] === "") { abrirModal(NOMES_BONITOS[escolha]); return; }
 
             if (rememberCheck.checked) { localStorage.setItem('ways_unidade_salva', escolha); } 
             else { localStorage.removeItem('ways_unidade_salva'); }
@@ -330,7 +299,7 @@
             window.location.reload();
         }
 
-        // 3. EVENTOS
+        // 3. LISTENERS
         iframe.onload = function() { 
             if(iframe.src && iframe.src !== window.location.href) {
                 appCarregou = true;
@@ -374,54 +343,31 @@
         
         let horaQueSaiu = Date.now();
         document.addEventListener("visibilitychange", function() {
-            if (document.visibilityState === "hidden") { horaQueSaiu = Date.now(); } 
+            // Se o usuário MINIMIZOU
+            if (document.visibilityState === "hidden") { 
+                horaQueSaiu = Date.now(); 
+            } 
+            // Se o usuário VOLTOU
             else if (document.visibilityState === "visible") {
+                // CORREÇÃO TELA BRANCA: Se o iframe sumiu, recarrega
+                if (!iframe.src || iframe.style.opacity === '0') {
+                    console.log("Correção tela branca ativada");
+                    if(urlAtual) forcartRecarregamento();
+                }
+
+                // Recarregamento por tempo (10 min)
                 if ((Date.now() - horaQueSaiu) / 1000 > 600 && urlAtual) forcartRecarregamento();
             }
         });
 
+        // 4. INICIALIZAÇÃO FINAL
         function verificarMemoria() {
             const unidadeSalva = localStorage.getItem('ways_unidade_salva');
             if (unidadeSalva && UNIDADES[unidadeSalva]) {
                 iniciarSistema(unidadeSalva);
             }
         }
-        
         verificarMemoria();
-
-        // --- CORREÇÃO DA TELA BRANCA (ANDROID BACK BUTTON) ---
-        
-        // 1. Forçar reload se o app voltar de um estado suspenso
-        document.addEventListener('visibilitychange', function() {
-            if (document.visibilityState === 'visible') {
-                console.log("App voltou para primeiro plano (Resume)");
-                
-                // Se o iframe estiver vazio ou a tela estiver branca, recarrega
-                if (!iframe.src || iframe.style.opacity === '0') {
-                    console.log("Tela detectada como vazia/branca. Forçando recarregamento...");
-                    forcartRecarregamento();
-                }
-                
-                // Opcional: Força um redesenho do iframe para acordar a renderização
-                iframe.style.display = 'none';
-                iframe.offsetHeight; // Truque para forçar o navegador a repintar
-                iframe.style.display = 'block';
-            }
-        });
-
-        // 2. Prevenir que o botão voltar feche o app acidentalmente (Opcional, mas recomendado)
-        // Isso cria um estado no histórico para que o botão voltar precise ser apertado 2x para sair
-        window.addEventListener('load', function() {
-            window.history.pushState({ noBack: true }, "");
-        });
-
-        window.addEventListener('popstate', function(event) {
-            if (event.state && event.state.noBack) {
-                window.history.pushState({ noBack: true }, "");
-                // Aqui você pode mostrar um aviso "Pressione voltar novamente para sair" se quiser
-            }
-        });
-        
     </script>
 </body>
 </html>
