@@ -96,6 +96,36 @@
         .offline-message { color: white; font-size: 1.2rem; text-align: center; margin-top: 20px; padding: 0 20px; }
         #install-btn { display: none; position: fixed; bottom: 25px; right: 25px; background-color: white; color: #6105e8; border: none; border-radius: 50px; padding: 12px 20px; font-weight: 700; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: pointer; z-index: 5000; align-items: center; gap: 8px; animation: slideUp 1s ease-out; }
 
+        /* --- MODAL DE CONSTRUÇÃO (POP-UP) --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); /* Fundo escuro transparente */
+            z-index: 20000; /* Fica acima de tudo */
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; visibility: hidden; transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        
+        .modal-box {
+            background-color: white; width: 85%; max-width: 320px;
+            border-radius: 20px; padding: 30px 20px;
+            text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transform: scale(0.8); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .modal-overlay.active .modal-box { transform: scale(1); }
+
+        .modal-icon { font-size: 3rem; margin-bottom: 15px; display: block; }
+        .modal-title { color: #6105e8; font-size: 1.4rem; font-weight: 700; margin-bottom: 10px; font-family: 'Poppins', sans-serif; }
+        .modal-text { color: #555; font-size: 0.95rem; margin-bottom: 25px; line-height: 1.5; }
+        
+        .modal-btn {
+            background-color: #6105e8; color: white; border: none; padding: 12px 30px;
+            border-radius: 50px; font-weight: 600; font-size: 1rem; cursor: pointer;
+            width: 100%;
+        }
+        .modal-btn:active { background-color: #4a04b0; transform: scale(0.98); }
+
+        /* Animações */
         @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-3px); } }
         @keyframes driveTruck { 0% { left: 0; } 90% { left: calc(95% - 60px); } 100% { left: calc(95% - 60px); } }
         @keyframes fillBar { 0% { width: 0%; } 90% { width: 95%; } 100% { width: 95%; } }
@@ -156,6 +186,15 @@
         </div>
     </div>
 
+    <div id="custom-modal" class="modal-overlay">
+        <div class="modal-box">
+            <span class="modal-icon">🚧</span>
+            <div class="modal-title">Em Construção</div>
+            <div class="modal-text" id="modal-msg">Esta unidade está sendo preparada para você.</div>
+            <button class="modal-btn" onclick="fecharModal()">Entendi</button>
+        </div>
+    </div>
+
     <button id="install-btn">
         <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 12.293V.5A.5.5 0 0 1 8 0z"/></svg>
         Instalar App
@@ -166,7 +205,7 @@
     </div>
 
     <script>
-        // 1. DEFINIÇÕES E VARIÁVEIS (Tudo aqui em cima para não dar erro)
+        // 1. DEFINIÇÕES
         const UNIDADES = {
             itaquera: "https://script.google.com/macros/s/AKfycbxCBBGZ4Cskn4gJtei_5iO8WL_4sdOkC3OI1WiJX8MibvRUj6xSXFVVHM39lA1_urUy/exec",
             carmo: "",
@@ -192,11 +231,15 @@
         const installBtn = document.getElementById('install-btn');
         const iframe = document.getElementById('app-frame');
         
+        // Elementos do Modal
+        const customModal = document.getElementById('custom-modal');
+        const modalMsg = document.getElementById('modal-msg');
+        
         let urlAtual = "";
         let appCarregou = false;
         let percentInterval;
 
-        // 2. FUNÇÕES AUXILIARES (Definidas antes de serem usadas)
+        // 2. FUNÇÕES AUXILIARES
         function startPercentage() {
             let percentCounter = 0;
             progressText.innerText = "0%";
@@ -226,7 +269,6 @@
                 setTimeout(() => { loadingScreen.style.opacity = '1'; }, 10);
                 startPercentage();
                 
-                // Reinicia a barra (Clone Node)
                 const container = document.querySelector('.loading-progress-container');
                 const novoContainer = container.cloneNode(true);
                 container.parentNode.replaceChild(novoContainer, container);
@@ -250,10 +292,32 @@
             iframe.src = urlAtual;
         }
 
+        // --- CONTROLE DO MODAL ---
+        function abrirModal(unidadeNome) {
+            modalMsg.innerText = "A unidade " + unidadeNome + " ainda está em construção. Em breve estará disponível!";
+            customModal.classList.add('active');
+        }
+
+        function fecharModal() {
+            customModal.classList.remove('active');
+        }
+
+        // --- AÇÃO DE CONFIRMAR ---
         function confirmarUnidade() {
             const escolha = unitSelect.value;
-            if (!escolha) { alert("Por favor, selecione uma unidade."); return; }
-            if (UNIDADES[escolha] === "") { alert("🚧 A unidade " + NOMES_BONITOS[escolha] + " está em construção!"); return; }
+            
+            if (!escolha) { 
+                // Reutilizando o modal para aviso de erro de seleção também, fica chique
+                modalMsg.innerText = "Por favor, selecione uma unidade na lista para continuar.";
+                customModal.classList.add('active');
+                return; 
+            }
+
+            // Verifica se está vazio
+            if (UNIDADES[escolha] === "") { 
+                abrirModal(NOMES_BONITOS[escolha]);
+                return; 
+            }
 
             if (rememberCheck.checked) { localStorage.setItem('ways_unidade_salva', escolha); } 
             else { localStorage.removeItem('ways_unidade_salva'); }
@@ -266,7 +330,7 @@
             window.location.reload();
         }
 
-        // 3. EVENTOS (Listeners)
+        // 3. EVENTOS
         iframe.onload = function() { 
             if(iframe.src && iframe.src !== window.location.href) {
                 appCarregou = true;
@@ -274,12 +338,10 @@
             }
         };
 
-        // Pull To Refresh
         try {
             if (typeof PullToRefresh !== 'undefined') {
                 PullToRefresh.init({
-                    mainElement: '#app-wrapper',
-                    triggerElement: '#app-wrapper',
+                    mainElement: '#app-wrapper', triggerElement: '#app-wrapper',
                     onRefresh: function() { forcartRecarregamento(); },
                     distThreshold: 70,
                     iconArrow: '<svg width="24" height="24" fill="white" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/><path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/></svg>',
@@ -289,22 +351,18 @@
             }
         } catch (e) { console.error(e); }
 
-        // Trava de Segurança (10s)
         setTimeout(() => {
             if (!appCarregou && navigator.onLine && urlAtual) { appCarregou = true; esconderLoading(); }
         }, 10000);
 
-        // Service Worker
         if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js'); }
 
-        // Instalação PWA
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; installBtn.style.display = 'flex'; });
         installBtn.addEventListener('click', async () => {
             if (deferredPrompt) { deferredPrompt.prompt(); const { outcome } = await deferredPrompt.userChoice; if (outcome === 'accepted') installBtn.style.display = 'none'; deferredPrompt = null; }
         });
 
-        // Online/Offline
         function atualizarStatusRede() {
             if (navigator.onLine) {
                 offlineScreen.style.display = 'none';
@@ -314,7 +372,6 @@
         window.addEventListener('online', atualizarStatusRede);
         window.addEventListener('offline', atualizarStatusRede);
         
-        // Cronômetro de Inatividade
         let horaQueSaiu = Date.now();
         document.addEventListener("visibilitychange", function() {
             if (document.visibilityState === "hidden") { horaQueSaiu = Date.now(); } 
@@ -323,7 +380,6 @@
             }
         });
 
-        // 4. INICIALIZAÇÃO (Agora sim, rodamos a verificação por último!)
         function verificarMemoria() {
             const unidadeSalva = localStorage.getItem('ways_unidade_salva');
             if (unidadeSalva && UNIDADES[unidadeSalva]) {
@@ -331,7 +387,7 @@
             }
         }
         
-        verificarMemoria(); // Chama a função apenas no final de tudo
+        verificarMemoria();
     </script>
 </body>
 </html>
