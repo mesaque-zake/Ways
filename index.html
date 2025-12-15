@@ -395,17 +395,51 @@
         window.addEventListener('online', atualizarStatusRede);
         window.addEventListener('offline', atualizarStatusRede);
         
+        // --- CRONÔMETRO DE INATIVIDADE E CORREÇÃO DE TELA BRANCA ---
         let horaQueSaiu = Date.now();
+        
         document.addEventListener("visibilitychange", function() {
-            if (document.visibilityState === "hidden") { horaQueSaiu = Date.now(); } 
+            // 1. USUÁRIO SAIU (Minimizou ou trocou aba)
+            if (document.visibilityState === "hidden") { 
+                horaQueSaiu = Date.now(); 
+                console.log("Usuário saiu. Marcando hora.");
+            } 
+            
+            // 2. USUÁRIO VOLTOU
             else if (document.visibilityState === "visible") {
-                if (!iframe.src || iframe.style.opacity === '0') {
-                    if(urlAtual) forcartRecarregamento();
+                console.log("Usuário voltou.");
+                
+                // Calcula quantos segundos ficou fora
+                const segundosFora = (Date.now() - horaQueSaiu) / 1000;
+                
+                // Se ficou fora mais de 3 segundos OU se a URL sumiu
+                // (Reduzi de 600 para 3 para garantir que a tela branca nunca fique)
+                if ((segundosFora > 3 || !iframe.src) && urlAtual) {
+                    console.log("Forçando recarregamento visual...");
+                    
+                    // Mostra o loading imediatamente para esconder a tela branca
+                    loadingScreen.style.display = 'flex';
+                    loadingScreen.style.opacity = '1';
+                    
+                    // Força o navegador a redesenhar o iframe (Truque do display)
+                    iframe.style.display = 'none';
+                    setTimeout(() => {
+                        iframe.style.display = 'block';
+                        forcartRecarregamento();
+                    }, 50);
                 }
-                if ((Date.now() - horaQueSaiu) / 1000 > 600 && urlAtual) forcartRecarregamento();
             }
         });
 
+        // 3. CORREÇÃO EXTRA PARA BOTÃO VOLTAR (BFCACHE)
+        // Se o usuário usou o botão voltar e o navegador restaurou a página do cache
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted && urlAtual) {
+                console.log("Página restaurada do cache. Recarregando...");
+                forcartRecarregamento();
+            }
+        });
+        
         function verificarMemoria() {
             const unidadeSalva = localStorage.getItem('ways_unidade_salva');
             if (unidadeSalva && UNIDADES[unidadeSalva]) {
