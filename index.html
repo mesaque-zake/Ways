@@ -388,6 +388,40 @@
         }
         
         verificarMemoria();
+
+        // --- CORREÇÃO DA TELA BRANCA (ANDROID BACK BUTTON) ---
+        
+        // 1. Forçar reload se o app voltar de um estado suspenso
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'visible') {
+                console.log("App voltou para primeiro plano (Resume)");
+                
+                // Se o iframe estiver vazio ou a tela estiver branca, recarrega
+                if (!iframe.src || iframe.style.opacity === '0') {
+                    console.log("Tela detectada como vazia/branca. Forçando recarregamento...");
+                    forcartRecarregamento();
+                }
+                
+                // Opcional: Força um redesenho do iframe para acordar a renderização
+                iframe.style.display = 'none';
+                iframe.offsetHeight; // Truque para forçar o navegador a repintar
+                iframe.style.display = 'block';
+            }
+        });
+
+        // 2. Prevenir que o botão voltar feche o app acidentalmente (Opcional, mas recomendado)
+        // Isso cria um estado no histórico para que o botão voltar precise ser apertado 2x para sair
+        window.addEventListener('load', function() {
+            window.history.pushState({ noBack: true }, "");
+        });
+
+        window.addEventListener('popstate', function(event) {
+            if (event.state && event.state.noBack) {
+                window.history.pushState({ noBack: true }, "");
+                // Aqui você pode mostrar um aviso "Pressione voltar novamente para sair" se quiser
+            }
+        });
+        
     </script>
 </body>
 </html>
