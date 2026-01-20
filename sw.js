@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ways-v3';
+const CACHE_NAME = 'ways-v4';
 const ASSETS = [
   './',
   './index.html',
