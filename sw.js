@@ -6,7 +6,7 @@ const ASSETS = [
   './MesaLogo.png',
   './Favicon.png',
   './icon-512.png',
-  './icon-192.png' // Já deixei pronto para quando você adicionar
+  './icon-192.png' // Lembre-se de subir este arquivo!
 ];
 
 self.addEventListener('install', (e) => {
@@ -27,6 +27,6 @@ self.addEventListener('activate', (e) => {
 
 self.addEventListener('fetch', (e) => {
   e.respondWith(
-    caches.match(e.request).then(response => response || fetch(e.request))
+    caches.match(e.request).then(res => res || fetch(e.request))
   );
 });
