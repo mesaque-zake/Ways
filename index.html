@@ -26,103 +26,154 @@
             overflow: hidden;
         }
 
-        /* Efeito de Vidro Fosco */
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 25px;
-            padding: 30px 20px;
-            width: 85%;
-            max-width: 340px;
-            text-align: center;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-            animation: slideUpFade 0.8s ease-out forwards;
-        }
-
+        /* Camadas de Tela */
         #selection-screen, #loading-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: #6105e8;
             display: flex; flex-direction: column; 
-            justify-content: center; align-items: center;
-            z-index: 9999; transition: opacity 0.8s ease, filter 0.8s ease;
+            align-items: center;
+            z-index: 9999; 
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+            padding: 40px 20px;
+            box-sizing: border-box;
         }
 
-        /* Títulos e Animações */
-        .welcome-text { color: white; font-size: 1.2rem; opacity: 0; animation: fadeIn 0.5s 0.3s forwards; }
+        /* Título e Cabeçalho (Mais ao topo) */
+        .header-section {
+            margin-top: 4vh;
+            text-align: center;
+            margin-bottom: 40px;
+            animation: slideDown 0.8s ease-out;
+        }
+        .welcome-text { color: white; font-size: 1.1rem; opacity: 0.9; font-weight: 300; letter-spacing: 1px; }
         .brand-text { 
             font-family: 'Dancing Script', cursive; 
             color: white; 
-            font-size: 5.5rem; 
-            margin: 10px 0 30px 0;
-            text-shadow: 0 8px 15px rgba(0,0,0,0.3);
-            opacity: 0; animation: fadeIn 0.8s 0.6s forwards;
+            font-size: 6rem; 
+            line-height: 1;
+            margin-top: 5px;
+            text-shadow: 0 10px 20px rgba(0,0,0,0.3);
         }
 
-        /* Custom Select */
-        .select-wrapper { 
-            width: 100%; position: relative; margin-bottom: 20px; 
-            opacity: 0; animation: fadeIn 0.5s 0.9s forwards;
+        /* --- MENU CUSTOMIZADO (SEM TAG SELECT) --- */
+        .custom-dropdown-container {
+            position: relative;
+            width: 100%; max-width: 320px;
+            margin-bottom: 25px;
+            z-index: 100; /* Ficar acima dos outros */
         }
-        select {
-            width: 100%; padding: 15px; border-radius: 15px;
-            border: 1px solid rgba(255,255,255,0.4);
-            background: rgba(255,255,255,0.1);
-            color: white; font-size: 1rem; appearance: none; outline: none;
-        }
-        select option { background-color: #6105e8; color: white; }
 
-        /* Checkbox Customizado */
-        #post-selection { display: none; flex-direction: column; align-items: center; width: 100%; animation: fadeIn 0.4s forwards; }
+        .dropdown-trigger {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 18px;
+            padding: 18px 25px;
+            color: white;
+            font-size: 1rem;
+            display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: background 0.2s;
+        }
+        .dropdown-trigger:active { background: rgba(255,255,255,0.25); }
+        .dropdown-arrow { transition: transform 0.3s; font-size: 0.8rem; }
+        .dropdown-trigger.active .dropdown-arrow { transform: rotate(180deg); }
+
+        .dropdown-options {
+            position: absolute; top: 110%; left: 0; width: 100%;
+            background: rgba(40, 10, 90, 0.95); /* Fundo escuro levemente roxo para contraste */
+            backdrop-filter: blur(15px);
+            border-radius: 18px;
+            border: 1px solid rgba(255,255,255,0.1);
+            overflow: hidden;
+            display: none; /* Escondido por padrão */
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            animation: fadeInDrop 0.2s ease-out;
+        }
+        .dropdown-option {
+            padding: 15px 25px;
+            color: white;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .dropdown-option:last-child { border-bottom: none; }
+        .dropdown-option:active { background: rgba(255,255,255,0.2); }
+
+        /* Controles Pós-Seleção */
+        #post-selection { 
+            display: none; 
+            flex-direction: column; 
+            align-items: center; 
+            width: 100%; 
+            animation: fadeIn 0.5s ease-out forwards; 
+        }
+
         .remember-container {
-            display: flex; align-items: center; color: white; font-size: 0.85rem; margin-bottom: 25px; cursor: pointer;
+            display: flex; align-items: center; color: white; font-size: 0.9rem; margin-bottom: 30px; cursor: pointer;
+            padding: 10px; opacity: 0.9;
         }
         .checkbox-ui {
-            width: 18px; height: 18px; border: 2px solid white; border-radius: 4px; margin-right: 10px;
+            width: 20px; height: 20px; border: 2px solid white; border-radius: 6px; margin-right: 12px;
             position: relative; transition: all 0.2s;
         }
         input:checked + .checkbox-ui { background: white; }
         input:checked + .checkbox-ui::after {
-            content: '✓'; color: #6105e8; position: absolute; font-size: 12px; top: -1px; left: 2px;
+            content: '✓'; color: #6105e8; position: absolute; font-size: 14px; top: -2px; left: 3px; font-weight: bold;
         }
 
         .enter-btn {
-            background-color: white; color: #6105e8; border: none; padding: 14px 50px;
-            border-radius: 50px; font-weight: 700; font-size: 1rem; cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: transform 0.2s;
+            background-color: white; color: #6105e8; border: none; padding: 16px 70px;
+            border-radius: 50px; font-weight: 700; font-size: 1.1rem; cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25); transition: transform 0.1s;
         }
+        .enter-btn:active { transform: scale(0.95); }
 
-        /* Loading e Iframe */
-        #app-frame { position: fixed; top: 0; left: 0; width: 100%; height: 100%; border: none; z-index: 1; }
-        .progress-track { width: 100%; height: 6px; background: rgba(255,255,255,0.2); border-radius: 10px; margin-top: 20px; overflow: hidden; }
-        .progress-fill { height: 100%; width: 0%; background: white; transition: width 0.3s; }
+        /* Rodapé Compartilhado */
+        .footer-container {
+            margin-top: auto; /* Empurra para baixo */
+            display: flex; flex-direction: column; align-items: center;
+            opacity: 0.8;
+            animation: fadeIn 1s 1s forwards;
+        }
+        .footer-logo { width: 90px; margin-bottom: 10px; }
+        .powered-by { font-size: 0.75rem; color: rgba(255, 255, 255, 0.7); font-weight: 300; }
+
+        /* TELA DE LOADING */
+        #loading-screen { justify-content: center; z-index: 10000; }
         
-        .switch-unit-card {
-            background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2);
-            padding: 10px 20px; border-radius: 12px; color: white; font-size: 0.8rem;
-            margin-bottom: 20px; cursor: pointer; backdrop-filter: blur(10px);
+        .loading-center {
+            flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%;
+        }
+        .progress-track { width: 200px; height: 5px; background: rgba(255,255,255,0.2); border-radius: 10px; overflow: hidden; margin-bottom: 15px; }
+        .progress-fill { height: 100%; width: 0%; background: white; transition: width 0.1s linear; }
+        #progress-text { color: white; font-weight: 600; font-size: 1.2rem; }
+
+        .switch-unit-btn {
+            margin-top: auto; margin-bottom: 20px;
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+            padding: 12px 25px; border-radius: 30px; color: white; font-size: 0.9rem;
+            backdrop-filter: blur(5px); cursor: pointer;
         }
 
-        /* Rodapé Fixo */
-        .footer-fixed {
-            position: fixed; bottom: 30px; display: flex; flex-direction: column; align-items: center; width: 100%; z-index: 10000;
-            opacity: 0; animation: fadeIn 1s 1.2s forwards;
-        }
-        .footer-logo { width: 80px; margin-bottom: 10px; }
-        .powered-by { font-size: 0.75rem; color: rgba(255, 255, 255, 0.6); }
+        /* Iframe */
+        #app-frame { position: fixed; top: 0; left: 0; width: 100%; height: 100%; border: none; z-index: 1; }
 
-        /* Modal Construção */
+        /* Modal */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.7); z-index: 20000;
+            background-color: rgba(0, 0, 0, 0.8); z-index: 20000;
             display: none; justify-content: center; align-items: center;
+            backdrop-filter: blur(5px);
         }
-        .modal-box { background: white; padding: 30px; border-radius: 20px; text-align: center; width: 80%; max-width: 300px; }
+        .modal-box { background: white; padding: 30px; border-radius: 25px; text-align: center; width: 80%; max-width: 300px; }
 
-        /* Keyframes */
+        @keyframes slideDown { from { transform: translateY(-30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUpFade { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInDrop { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -130,52 +181,64 @@
     <iframe id="app-frame" src=""></iframe>
 
     <div id="selection-screen">
-        <div class="glass-panel">
+        <div class="header-section">
             <div class="welcome-text">Bem-vindo ao</div>
             <div class="brand-text">Ways</div>
-            
-            <div class="select-wrapper">
-                <select id="unit-select" onchange="mostrarBotao()">
-                    <option value="" disabled selected>Selecione sua Unidade</option>
-                    <option value="itaquera">Itaquera</option>
-                    <option value="carmo">Carmo</option>
-                    <option value="interlagos">Interlagos</option>
-                    <option value="campolimpo">Campo Limpo</option>
-                    <option value="cecam">CECAM</option>
-                </select>
-            </div>
+        </div>
 
-            <div id="post-selection">
-                <label class="remember-container">
-                    <input type="checkbox" id="remember-check" style="display:none">
-                    <div class="checkbox-ui"></div>
-                    Lembrar minha escolha
-                </label>
-                <button class="enter-btn" onclick="confirmarUnidade()">ACESSAR</button>
+        <div class="custom-dropdown-container">
+            <div class="dropdown-trigger" onclick="toggleDropdown()">
+                <span id="selected-text">Selecione sua Unidade</span>
+                <span class="dropdown-arrow">▼</span>
+            </div>
+            <div class="dropdown-options" id="dropdown-options">
+                <div class="dropdown-option" onclick="selectUnit('itaquera', 'Itaquera')">Itaquera</div>
+                <div class="dropdown-option" onclick="selectUnit('carmo', 'Carmo')">Carmo</div>
+                <div class="dropdown-option" onclick="selectUnit('interlagos', 'Interlagos')">Interlagos</div>
+                <div class="dropdown-option" onclick="selectUnit('campolimpo', 'Campo Limpo')">Campo Limpo</div>
+                <div class="dropdown-option" onclick="selectUnit('cecam', 'CECAM')">CECAM</div>
+            </div>
+        </div>
+        <input type="hidden" id="unit-value">
+
+        <div id="post-selection">
+            <label class="remember-container">
+                <input type="checkbox" id="remember-check" style="display:none">
+                <div class="checkbox-ui"></div>
+                Lembrar minha escolha
+            </label>
+            <button class="enter-btn" onclick="confirmarUnidade()">ACESSAR</button>
+        </div>
+
+        <div class="footer-container">
+            <img src="MesaLogo.png" class="footer-logo">
+            <div class="powered-by">
+                Powered with <span style="color: #FFFFFF;">&#10084;</span> by <strong>Mesaque</strong>
             </div>
         </div>
     </div>
 
     <div id="loading-screen" style="display: none;">
-        <div class="switch-unit-card" onclick="resetarEscolha()">Trocar Unidade</div>
-        <div style="width: 70%; max-width: 250px;">
+        <div class="loading-center">
             <div class="progress-track"><div class="progress-fill" id="fill"></div></div>
-            <div id="progress-text" style="color:white; text-align:center; margin-top:10px; font-weight:600">0%</div>
+            <div id="progress-text">0%</div>
         </div>
-    </div>
 
-    <div class="footer-fixed">
-        <img src="MesaLogo.png" class="footer-logo">
-        <div class="powered-by">
-            Powered with <span style="color: #FFFFFF;">&#10084;</span> by <strong>Mesaque</strong>
+        <div class="switch-unit-btn" onclick="resetarEscolha()">Trocar Unidade</div>
+
+        <div class="footer-container" style="margin-top: 0; margin-bottom: 30px;">
+            <img src="MesaLogo.png" class="footer-logo">
+            <div class="powered-by">
+                Powered with <span style="color: #FFFFFF;">&#10084;</span> by <strong>Mesaque</strong>
+            </div>
         </div>
     </div>
 
     <div id="custom-modal" class="modal-overlay">
         <div class="modal-box">
             <h3 style="color:#6105e8; margin-top:0">🚧 Em Construção</h3>
-            <p id="modal-msg" style="color:#555; font-size:0.9rem"></p>
-            <button onclick="fecharModal()" style="background:#6105e8; color:white; border:none; padding:10px 25px; border-radius:50px; font-weight:600">Entendi</button>
+            <p id="modal-msg" style="color:#555; font-size:0.9rem; margin: 15px 0 25px 0;"></p>
+            <button onclick="fecharModal()" style="background:#6105e8; color:white; border:none; padding:12px 30px; border-radius:50px; font-weight:600; cursor:pointer;">Entendi</button>
         </div>
     </div>
 
@@ -185,36 +248,65 @@
             cecam: "https://script.google.com/macros/s/AKfycbyxlrK1vuSQr5XnvBbfiRBHmrfdmwXX9TVihQAKyxTD7Im2EhIzmmcmQWQABodEUIJN/exec",
             carmo: "", interlagos: "", campolimpo: ""
         };
-
-        const NOMES = { itaquera: "Itaquera", cecam: "CECAM", carmo: "Carmo", interlagos: "Interlagos", campolimpo: "Campo Limpo" };
         
         let urlAtual = "";
         let horaSaida = Date.now();
 
-        function mostrarBotao() {
-            document.getElementById('post-selection').style.display = 'flex';
+        // --- Lógica do Menu Customizado ---
+        function toggleDropdown() {
+            const list = document.getElementById('dropdown-options');
+            const trigger = document.querySelector('.dropdown-trigger');
+            if (list.style.display === 'flex') {
+                list.style.display = 'none';
+                trigger.classList.remove('active');
+            } else {
+                list.style.display = 'flex';
+                trigger.classList.add('active');
+            }
+        }
+
+        function selectUnit(value, text) {
+            document.getElementById('unit-value').value = value;
+            document.getElementById('selected-text').innerText = text;
+            toggleDropdown(); // Fecha o menu
+            document.getElementById('post-selection').style.display = 'flex'; // Mostra botão
+        }
+
+        // Fecha o menu se clicar fora
+        window.onclick = function(event) {
+            if (!event.target.matches('.dropdown-trigger') && !event.target.matches('.dropdown-trigger *')) {
+                document.getElementById('dropdown-options').style.display = 'none';
+                document.querySelector('.dropdown-trigger').classList.remove('active');
+            }
         }
 
         function fecharModal() { document.getElementById('custom-modal').style.display = 'none'; }
 
         function confirmarUnidade() {
-            const escolha = document.getElementById('unit-select').value;
+            const escolha = document.getElementById('unit-value').value;
+            if (!escolha) return;
+
             if (UNIDADES[escolha] === "") {
-                document.getElementById('modal-msg').innerText = "A unidade " + NOMES[escolha] + " ainda está em construção. Em breve estará disponível!";
+                const text = document.getElementById('selected-text').innerText;
+                document.getElementById('modal-msg').innerText = "A unidade " + text + " ainda está em construção.";
                 document.getElementById('custom-modal').style.display = 'flex';
                 return;
             }
+            
             if (document.getElementById('remember-check').checked) localStorage.setItem('ways_unidade_salva', escolha);
             iniciarSistema(escolha);
         }
 
         function iniciarSistema(chave) {
             urlAtual = UNIDADES[chave];
-            document.getElementById('selection-screen').style.opacity = '0';
-            setTimeout(() => { document.getElementById('selection-screen').style.display = 'none'; }, 800);
             
-            const loading = document.getElementById('loading-screen');
-            loading.style.display = 'flex';
+            // Transição de telas
+            const selScreen = document.getElementById('selection-screen');
+            selScreen.style.opacity = '0';
+            selScreen.style.visibility = 'hidden';
+            
+            const loadScreen = document.getElementById('loading-screen');
+            loadScreen.style.display = 'flex';
             
             let p = 0;
             const fill = document.getElementById('fill');
@@ -225,17 +317,16 @@
                 fill.style.width = p + '%';
                 txt.innerText = p + '%';
                 
-                // Revelação gradual (Progressive Blur)
-                if (p > 50) {
-                    let op = 1 - ((p - 50) / 50);
-                    loading.style.opacity = op;
+                // DESAPARECER TUDO NO FINAL
+                if (p > 85) {
+                    loadScreen.style.opacity = '0'; // Loading, Logo, Botão - TUDO some
                 }
 
                 if (p >= 100) {
                     clearInterval(interval);
-                    loading.style.display = 'none';
+                    setTimeout(() => { loadScreen.style.display = 'none'; }, 800);
                 }
-            }, 35);
+            }, 30); // Velocidade do carregamento
 
             document.getElementById('app-frame').src = urlAtual;
         }
@@ -245,7 +336,7 @@
             window.location.reload();
         }
 
-        // Lógica de Persistência e correção de tela branca
+        // Lógica dos 10 Minutos
         document.addEventListener("visibilitychange", function() {
             if (document.visibilityState === "hidden") {
                 horaSaida = Date.now();
@@ -254,17 +345,20 @@
                 if (tempoFora > 600 && urlAtual) {
                     window.location.reload();
                 } else {
-                    // Acorda o iframe sem reload se ficou pouco tempo fora
                     const frame = document.getElementById('app-frame');
-                    frame.style.opacity = '0.99';
+                    frame.style.opacity = '0.99'; // Truque visual
                     setTimeout(() => { frame.style.opacity = '1'; }, 10);
                 }
             }
         });
 
-        // Auto-login
+        // Auto-login se já tiver salvo
         const salva = localStorage.getItem('ways_unidade_salva');
-        if (salva && UNIDADES[salva]) iniciarSistema(salva);
+        if (salva && UNIDADES[salva]) {
+            // Se já tem salvo, pula direto pro loading, nem mostra a seleção
+            document.getElementById('selection-screen').style.display = 'none';
+            iniciarSistema(salva);
+        }
 
         if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js'); }
     </script>
