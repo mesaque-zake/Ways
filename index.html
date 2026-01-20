@@ -34,13 +34,16 @@
         }
 
         .neon-truck {
-            position: absolute;
-            width: 50px; height: auto;
-            fill: #FFFFFF;
-            opacity: 0.5; /* Levemente transparente */
-            /* O SEGREDO DO NEON: Sombra branca brilhante */
-            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
-        }
+          position: absolute;
+          width: 50px; height: auto;
+          fill: #FFFFFF;
+          opacity: 0.7;
+          filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
+    
+          /* ADICIONE ISSO PARA FORÇAR O CELULAR A RENDERIZAR: */
+          will-change: transform;
+          transform: translateZ(0); 
+         }
 
         /* Animação Esquerda -> Direita */
         @keyframes driveRight {
