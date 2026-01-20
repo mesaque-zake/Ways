@@ -1,12 +1,32 @@
-self.addEventListener('fetch', (e) => {
-  e.respondWith(fetch(e.request));
-});
-self.addEventListener('install', (event) => {
-  // Força o novo Service Worker a ativar imediatamente, sem esperar o antigo fechar
+const CACHE_NAME = 'ways-v2';
+const ASSETS = [
+  './',
+  './index.html',
+  './manifest.json',
+  './MesaLogo.png',
+  './Favicon.png',
+  './icon-512.png',
+  './icon-192.png' // Já deixei pronto para quando você adicionar
+];
+
+self.addEventListener('install', (e) => {
+  e.waitUntil(
+    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
+  );
   self.skipWaiting();
 });
 
-self.addEventListener('activate', (event) => {
-  // Assume o controle de todas as abas/janelas abertas imediatamente
-  event.waitUntil(self.clients.claim());
+self.addEventListener('activate', (e) => {
+  e.waitUntil(
+    caches.keys().then(keys => Promise.all(
+      keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
+    ))
+  );
+  self.clients.claim();
+});
+
+self.addEventListener('fetch', (e) => {
+  e.respondWith(
+    caches.match(e.request).then(response => response || fetch(e.request))
+  );
 });
