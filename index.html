@@ -17,101 +17,125 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pulltorefreshjs/0.1.22/pulltorefresh.min.js"></script>
 
     <style>
-        :root { --purple: #6105e8; --glass: rgba(255, 255, 255, 0.15); }
-
+        /* Base */
         body, html {
             margin: 0; padding: 0; height: 100%;
-            background-color: var(--purple);
+            background-color: #6105e8;
             font-family: 'Poppins', sans-serif;
             -webkit-tap-highlight-color: transparent;
             overflow: hidden;
         }
 
-        /* Efeito de Vidro Fosco (Glassmorphism) */
-        .glass-card {
-            background: var(--glass);
+        /* Efeito de Vidro Fosco */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
+            border-radius: 25px;
+            padding: 30px 20px;
+            width: 85%;
+            max-width: 340px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            animation: slideUpFade 0.8s ease-out forwards;
         }
 
-        #selection-screen, #loading-screen, #offline-screen {
+        #selection-screen, #loading-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: var(--purple);
+            background-color: #6105e8;
             display: flex; flex-direction: column; 
-            justify-content: space-between; align-items: center;
-            z-index: 9999; transition: opacity 0.5s ease-out;
-            padding-bottom: max(30px, env(safe-area-inset-bottom));
+            justify-content: center; align-items: center;
+            z-index: 9999; transition: opacity 0.8s ease, filter 0.8s ease;
         }
 
-        .content-wrapper { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; }
-
-        /* Título Ways */
+        /* Títulos e Animações */
+        .welcome-text { color: white; font-size: 1.2rem; opacity: 0; animation: fadeIn 0.5s 0.3s forwards; }
         .brand-text { 
             font-family: 'Dancing Script', cursive; 
             color: white; 
-            font-size: 5.5rem; /* Aumentado */
-            margin-bottom: 30px; 
-            text-shadow: 0 10px 20px rgba(0,0,0,0.3); /* Sombra elegante */
+            font-size: 5.5rem; 
+            margin: 10px 0 30px 0;
+            text-shadow: 0 8px 15px rgba(0,0,0,0.3);
+            opacity: 0; animation: fadeIn 0.8s 0.6s forwards;
         }
 
-        /* Select Customizado Estilo iOS */
-        .custom-select-container {
-            width: 85%; max-width: 320px; position: relative; margin-bottom: 20px;
+        /* Custom Select */
+        .select-wrapper { 
+            width: 100%; position: relative; margin-bottom: 20px; 
+            opacity: 0; animation: fadeIn 0.5s 0.9s forwards;
         }
         select {
-            width: 100%; padding: 18px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.3);
-            background: var(--glass); backdrop-filter: blur(10px);
+            width: 100%; padding: 15px; border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.4);
+            background: rgba(255,255,255,0.1);
             color: white; font-size: 1rem; appearance: none; outline: none;
-            cursor: pointer; transition: all 0.3s ease;
         }
-        .custom-select-container::after {
-            content: '▼'; font-size: 0.8rem; color: white; position: absolute; right: 20px; top: 50%; transform: translateY(-50%); pointer-events: none;
-        }
+        select option { background-color: #6105e8; color: white; }
 
         /* Checkbox Customizado */
+        #post-selection { display: none; flex-direction: column; align-items: center; width: 100%; animation: fadeIn 0.4s forwards; }
         .remember-container {
-            display: flex; align-items: center; color: white; font-size: 0.95rem; margin-bottom: 35px; cursor: pointer;
-            padding: 10px 20px; border-radius: 12px; transition: background 0.2s;
+            display: flex; align-items: center; color: white; font-size: 0.85rem; margin-bottom: 25px; cursor: pointer;
         }
-        .remember-container:active { background: rgba(255,255,255,0.1); }
-        .checkbox-custom {
-            width: 22px; height: 22px; border: 2px solid white; border-radius: 6px; margin-right: 12px;
-            position: relative; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        .checkbox-ui {
+            width: 18px; height: 18px; border: 2px solid white; border-radius: 4px; margin-right: 10px;
+            position: relative; transition: all 0.2s;
         }
-        input:checked + .checkbox-custom { background: white; }
-        input:checked + .checkbox-custom::after {
-            content: '✓'; color: var(--purple); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: bold;
+        input:checked + .checkbox-ui { background: white; }
+        input:checked + .checkbox-ui::after {
+            content: '✓'; color: #6105e8; position: absolute; font-size: 12px; top: -1px; left: 2px;
         }
 
         .enter-btn {
-            background-color: white; color: var(--purple); border: none; padding: 16px 60px;
-            border-radius: 50px; font-weight: 700; font-size: 1.1rem; cursor: pointer;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.25); transition: transform 0.2s, box-shadow 0.2s;
+            background-color: white; color: #6105e8; border: none; padding: 14px 50px;
+            border-radius: 50px; font-weight: 700; font-size: 1rem; cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: transform 0.2s;
         }
-        .enter-btn:active { transform: scale(0.92); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
 
-        /* Rodapé */
-        .footer-logo { width: 85px; opacity: 0.8; margin-bottom: 8px; }
-        .powered-by { font-size: 0.75rem; color: rgba(255, 255, 255, 0.5); font-weight: 300; }
+        /* Loading e Iframe */
+        #app-frame { position: fixed; top: 0; left: 0; width: 100%; height: 100%; border: none; z-index: 1; }
+        .progress-track { width: 100%; height: 6px; background: rgba(255,255,255,0.2); border-radius: 10px; margin-top: 20px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: white; transition: width 0.3s; }
+        
+        .switch-unit-card {
+            background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2);
+            padding: 10px 20px; border-radius: 12px; color: white; font-size: 0.8rem;
+            margin-bottom: 20px; cursor: pointer; backdrop-filter: blur(10px);
+        }
 
-        /* Estilo Iframe e Loading */
-        iframe { width: 100vw; height: 100vh; border: none; opacity: 0; transition: opacity 0.5s ease; }
-        .loading-progress-container { width: 80%; max-width: 280px; position: relative; }
-        .progress-track { height: 4px; background: rgba(255,255,255,0.2); border-radius: 10px; overflow: hidden; }
-        .progress-fill { height: 100%; width: 0%; background: white; transition: width 0.35s linear; }
+        /* Rodapé Fixo */
+        .footer-fixed {
+            position: fixed; bottom: 30px; display: flex; flex-direction: column; align-items: center; width: 100%; z-index: 10000;
+            opacity: 0; animation: fadeIn 1s 1.2s forwards;
+        }
+        .footer-logo { width: 80px; margin-bottom: 10px; }
+        .powered-by { font-size: 0.75rem; color: rgba(255, 255, 255, 0.6); }
+
+        /* Modal Construção */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); z-index: 20000;
+            display: none; justify-content: center; align-items: center;
+        }
+        .modal-box { background: white; padding: 30px; border-radius: 20px; text-align: center; width: 80%; max-width: 300px; }
+
+        /* Keyframes */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUpFade { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
+    <iframe id="app-frame" src=""></iframe>
+
     <div id="selection-screen">
-        <div class="content-wrapper">
-            <div style="color:white; opacity:0.8; font-weight:300; letter-spacing:1px">BEM-VINDO AO</div>
+        <div class="glass-panel">
+            <div class="welcome-text">Bem-vindo ao</div>
             <div class="brand-text">Ways</div>
             
-            <div class="custom-select-container">
-                <select id="unit-select">
+            <div class="select-wrapper">
+                <select id="unit-select" onchange="mostrarBotao()">
                     <option value="" disabled selected>Selecione sua Unidade</option>
                     <option value="itaquera">Itaquera</option>
                     <option value="carmo">Carmo</option>
@@ -121,31 +145,39 @@
                 </select>
             </div>
 
-            <label class="remember-container">
-                <input type="checkbox" id="remember-check" style="display:none">
-                <div class="checkbox-custom"></div>
-                Lembrar minha escolha
-            </label>
-
-            <button class="enter-btn" onclick="confirmarUnidade()">ACESSAR</button>
-        </div>
-        
-        <div class="content-wrapper" style="flex-grow:0; margin-bottom:20px">
-            <img src="MesaLogo.png" class="footer-logo">
-            <div class="powered-by">Powered by <strong>Mesaque</strong></div>
-        </div>
-    </div>
-
-    <div id="loading-screen" style="display: none;"> 
-        <div class="content-wrapper">
-            <div class="loading-progress-container">
-                <div class="progress-track"><div class="progress-fill" id="fill"></div></div>
-                <div id="progress-text" style="color:white; text-align:center; margin-top:15px; font-weight:600">0%</div>
+            <div id="post-selection">
+                <label class="remember-container">
+                    <input type="checkbox" id="remember-check" style="display:none">
+                    <div class="checkbox-ui"></div>
+                    Lembrar minha escolha
+                </label>
+                <button class="enter-btn" onclick="confirmarUnidade()">ACESSAR</button>
             </div>
         </div>
     </div>
 
-    <iframe id="app-frame" src="" allow="geolocation"></iframe>
+    <div id="loading-screen" style="display: none;">
+        <div class="switch-unit-card" onclick="resetarEscolha()">Trocar Unidade</div>
+        <div style="width: 70%; max-width: 250px;">
+            <div class="progress-track"><div class="progress-fill" id="fill"></div></div>
+            <div id="progress-text" style="color:white; text-align:center; margin-top:10px; font-weight:600">0%</div>
+        </div>
+    </div>
+
+    <div class="footer-fixed">
+        <img src="MesaLogo.png" class="footer-logo">
+        <div class="powered-by">
+            Powered with <span style="color: #FFFFFF;">&#10084;</span> by <strong>Mesaque</strong>
+        </div>
+    </div>
+
+    <div id="custom-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h3 style="color:#6105e8; margin-top:0">🚧 Em Construção</h3>
+            <p id="modal-msg" style="color:#555; font-size:0.9rem"></p>
+            <button onclick="fecharModal()" style="background:#6105e8; color:white; border:none; padding:10px 25px; border-radius:50px; font-weight:600">Entendi</button>
+        </div>
+    </div>
 
     <script>
         const UNIDADES = {
@@ -154,64 +186,85 @@
             carmo: "", interlagos: "", campolimpo: ""
         };
 
+        const NOMES = { itaquera: "Itaquera", cecam: "CECAM", carmo: "Carmo", interlagos: "Interlagos", campolimpo: "Campo Limpo" };
+        
         let urlAtual = "";
-        let appCarregou = false;
-        let timeoutReload;
+        let horaSaida = Date.now();
+
+        function mostrarBotao() {
+            document.getElementById('post-selection').style.display = 'flex';
+        }
+
+        function fecharModal() { document.getElementById('custom-modal').style.display = 'none'; }
+
+        function confirmarUnidade() {
+            const escolha = document.getElementById('unit-select').value;
+            if (UNIDADES[escolha] === "") {
+                document.getElementById('modal-msg').innerText = "A unidade " + NOMES[escolha] + " ainda está em construção. Em breve estará disponível!";
+                document.getElementById('custom-modal').style.display = 'flex';
+                return;
+            }
+            if (document.getElementById('remember-check').checked) localStorage.setItem('ways_unidade_salva', escolha);
+            iniciarSistema(escolha);
+        }
 
         function iniciarSistema(chave) {
             urlAtual = UNIDADES[chave];
             document.getElementById('selection-screen').style.opacity = '0';
-            setTimeout(() => { document.getElementById('selection-screen').style.display = 'none'; }, 500);
+            setTimeout(() => { document.getElementById('selection-screen').style.display = 'none'; }, 800);
             
-            document.getElementById('loading-screen').style.display = 'flex';
+            const loading = document.getElementById('loading-screen');
+            loading.style.display = 'flex';
+            
+            let p = 0;
             const fill = document.getElementById('fill');
             const txt = document.getElementById('progress-text');
-            let p = 0;
-            let int = setInterval(() => {
-                p++; fill.style.width = p + '%'; txt.innerText = p + '%';
-                if(p >= 99) clearInterval(int);
-            }, 30);
+            
+            const interval = setInterval(() => {
+                p++;
+                fill.style.width = p + '%';
+                txt.innerText = p + '%';
+                
+                // Revelação gradual (Progressive Blur)
+                if (p > 50) {
+                    let op = 1 - ((p - 50) / 50);
+                    loading.style.opacity = op;
+                }
+
+                if (p >= 100) {
+                    clearInterval(interval);
+                    loading.style.display = 'none';
+                }
+            }, 35);
 
             document.getElementById('app-frame').src = urlAtual;
         }
 
-        document.getElementById('app-frame').onload = () => {
-            appCarregou = true;
-            document.getElementById('loading-screen').style.opacity = '0';
-            document.getElementById('app-frame').style.opacity = '1';
-            setTimeout(() => { document.getElementById('loading-screen').style.display = 'none'; }, 500);
-        };
-
-        function confirmarUnidade() {
-            const sel = document.getElementById('unit-select').value;
-            if(!sel) return alert("Selecione uma unidade");
-            if(UNIDADES[sel] === "") return alert("Unidade em construção!");
-            if(document.getElementById('remember-check').checked) localStorage.setItem('ways_unidade', sel);
-            iniciarSistema(sel);
+        function resetarEscolha() {
+            localStorage.removeItem('ways_unidade_salva');
+            window.location.reload();
         }
 
-        // LÓGICA DE PERSISTÊNCIA (AQUI É O SEGREDO)
-        let horaSaida;
-        document.addEventListener("visibilitychange", () => {
+        // Lógica de Persistência e correção de tela branca
+        document.addEventListener("visibilitychange", function() {
             if (document.visibilityState === "hidden") {
                 horaSaida = Date.now();
             } else {
                 const tempoFora = (Date.now() - horaSaida) / 1000;
-                // SÓ RECARREGA SE FICAR MAIS DE 10 MINUTOS (600 segundos)
                 if (tempoFora > 600 && urlAtual) {
                     window.location.reload();
                 } else {
-                    // Se a tela ficar branca, este pequeno truque força o navegador a redesenhar o Iframe sem recarregar a URL
+                    // Acorda o iframe sem reload se ficou pouco tempo fora
                     const frame = document.getElementById('app-frame');
-                    frame.style.display = 'none';
-                    setTimeout(() => { frame.style.display = 'block'; }, 10);
+                    frame.style.opacity = '0.99';
+                    setTimeout(() => { frame.style.opacity = '1'; }, 10);
                 }
             }
         });
 
-        // Verifica memória ao abrir
-        const salva = localStorage.getItem('ways_unidade');
-        if(salva) iniciarSistema(salva);
+        // Auto-login
+        const salva = localStorage.getItem('ways_unidade_salva');
+        if (salva && UNIDADES[salva]) iniciarSistema(salva);
 
         if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js'); }
     </script>
