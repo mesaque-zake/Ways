@@ -2,174 +2,115 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Ways</title>
 
     <link rel="icon" type="image/png" href="Favicon.png">
-
-    <meta property="og:image" content="https://mesaque-zake.github.io/Ways/BannerMesa.png">
-    <meta property="og:url" content="https://mesaque-zake.github.io/Ways/">
-    <meta property="og:title" content="Ways - Otimizador de Rotas">
-    <meta property="og:description" content="O trajeto mais rápido na palma da sua mão. Vamos sair do papel e mudar nossos caminhos: Acesse o Ways!">
-    <meta property="og:type" content="WebApp">
-
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-title" content="Ways">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="icon-512.png">
     <meta name="theme-color" content="#6105e8">
 
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pulltorefreshjs/0.1.22/pulltorefresh.min.js"></script>
 
     <style>
-        /* Base */
+        :root { --purple: #6105e8; --glass: rgba(255, 255, 255, 0.15); }
+
         body, html {
             margin: 0; padding: 0; height: 100%;
-            background-color: #6105e8;
+            background-color: var(--purple);
             font-family: 'Poppins', sans-serif;
             -webkit-tap-highlight-color: transparent;
-            overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none;
+            overflow: hidden;
         }
-        body::-webkit-scrollbar { display: none; }
 
-        /* --- ESTRUTURA DAS TELAS --- */
+        /* Efeito de Vidro Fosco (Glassmorphism) */
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+        }
+
         #selection-screen, #loading-screen, #offline-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #6105e8;
+            background-color: var(--purple);
             display: flex; flex-direction: column; 
-            justify-content: space-between; /* Mantém topo e rodapé separados */
-            align-items: center;
+            justify-content: space-between; align-items: center;
             z-index: 9999; transition: opacity 0.5s ease-out;
-            box-sizing: border-box;
-            /* Margem de segurança para Mobile (iPhone X+) */
-            padding-bottom: max(20px, env(safe-area-inset-bottom)); 
+            padding-bottom: max(30px, env(safe-area-inset-bottom));
         }
 
-        /* Wrapper Central (Empurra o conteúdo para o meio) */
-        .content-wrapper {
-            flex-grow: 1; display: flex; flex-direction: column; 
-            justify-content: center; align-items: center; width: 100%;
+        .content-wrapper { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; }
+
+        /* Título Ways */
+        .brand-text { 
+            font-family: 'Dancing Script', cursive; 
+            color: white; 
+            font-size: 5.5rem; /* Aumentado */
+            margin-bottom: 30px; 
+            text-shadow: 0 10px 20px rgba(0,0,0,0.3); /* Sombra elegante */
         }
 
-        /* --- TELA DE SELEÇÃO --- */
-        #selection-screen { z-index: 10001; padding: 20px; padding-bottom: 30px; }
-        
-        .welcome-text { color: white; font-size: 1.2rem; margin-bottom: -10px; opacity: 0.9; }
-        .brand-text { font-family: 'Dancing Script', cursive; color: white; font-size: 4rem; margin-bottom: 40px; }
-
-        .unit-select-wrapper { width: 100%; max-width: 300px; margin-bottom: 20px; }
+        /* Select Customizado Estilo iOS */
+        .custom-select-container {
+            width: 85%; max-width: 320px; position: relative; margin-bottom: 20px;
+        }
         select {
-            width: 100%; padding: 15px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.3);
-            background-color: rgba(255,255,255,0.1); color: white; font-size: 1rem; font-family: 'Poppins', sans-serif;
-            appearance: none; outline: none; cursor: pointer;
-            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-            background-repeat: no-repeat; background-position: right 15px top 50%; background-size: 12px auto;
+            width: 100%; padding: 18px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.3);
+            background: var(--glass); backdrop-filter: blur(10px);
+            color: white; font-size: 1rem; appearance: none; outline: none;
+            cursor: pointer; transition: all 0.3s ease;
         }
-        select option { background-color: #6105e8; color: white; }
+        .custom-select-container::after {
+            content: '▼'; font-size: 0.8rem; color: white; position: absolute; right: 20px; top: 50%; transform: translateY(-50%); pointer-events: none;
+        }
 
-        .remember-container { display: flex; align-items: center; color: white; font-size: 0.9rem; margin-bottom: 30px; cursor: pointer; }
-        .remember-checkbox { width: 18px; height: 18px; margin-right: 10px; accent-color: white; cursor: pointer; }
+        /* Checkbox Customizado */
+        .remember-container {
+            display: flex; align-items: center; color: white; font-size: 0.95rem; margin-bottom: 35px; cursor: pointer;
+            padding: 10px 20px; border-radius: 12px; transition: background 0.2s;
+        }
+        .remember-container:active { background: rgba(255,255,255,0.1); }
+        .checkbox-custom {
+            width: 22px; height: 22px; border: 2px solid white; border-radius: 6px; margin-right: 12px;
+            position: relative; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        input:checked + .checkbox-custom { background: white; }
+        input:checked + .checkbox-custom::after {
+            content: '✓'; color: var(--purple); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: bold;
+        }
 
         .enter-btn {
-            background-color: white; color: #6105e8; border: none; padding: 12px 50px;
-            border-radius: 50px; font-weight: 700; font-size: 1rem; cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: transform 0.2s;
+            background-color: white; color: var(--purple); border: none; padding: 16px 60px;
+            border-radius: 50px; font-weight: 700; font-size: 1.1rem; cursor: pointer;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.25); transition: transform 0.2s, box-shadow 0.2s;
         }
-        .enter-btn:active { transform: scale(0.95); }
+        .enter-btn:active { transform: scale(0.92); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
 
-        /* --- RODAPÉ E LOGOS --- */
-        .footer-container {
-            display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
-            width: 100%; margin-top: 20px;
-        }
+        /* Rodapé */
+        .footer-logo { width: 85px; opacity: 0.8; margin-bottom: 8px; }
+        .powered-by { font-size: 0.75rem; color: rgba(255, 255, 255, 0.5); font-weight: 300; }
 
-        .footer-logo { width: 90px; height: auto; opacity: 0.9; margin-bottom: 10px; }
-
-        /* NOVA ASSINATURA */
-        .powered-by {
-            font-size: 0.75rem; color: rgba(255, 255, 255, 0.6);
-            letter-spacing: 0.5px; font-weight: 300; pointer-events: none;
-            margin-top: 5px;
-        }
-
-        /* --- BOTÃO CARD 'TROCAR UNIDADE' --- */
-        .switch-unit-card {
-            background-color: rgba(255, 255, 255, 0.15); /* Fundo vidro */
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 8px 16px;
-            border-radius: 12px; /* Cantos arredondados suave */
-            font-size: 0.8rem;
-            color: white;
-            cursor: pointer;
-            margin-bottom: 25px; /* Espaço até o logo */
-            transition: all 0.2s ease;
-            text-align: center;
-        }
-        .switch-unit-card:active { 
-            transform: scale(0.95); 
-            background-color: rgba(255,255,255,0.25); 
-        }
-
-        /* --- TELA DE LOADING --- */
-        .loading-progress-container { width: 80%; max-width: 300px; position: relative; overflow: visible; margin-top: 20px; }
-        .truck-wrapper { position: absolute; top: -42px; left: 0; z-index: 2; animation: driveTruck 3.5s linear forwards; }
-        .truck-icon { height: 40px; width: 65px; overflow: visible; fill: white; display: block; animation: bounce 0.5s infinite alternate ease-in-out; }
-        .progress-track { width: 100%; height: 6px; background-color: rgba(255, 255, 255, 0.3); border-radius: 10px; overflow: hidden; position: relative; z-index: 1; }
-        .progress-fill { height: 100%; width: 0%; background-color: white; border-radius: 10px; animation: fillBar 3.5s linear forwards; }
-        #progress-text { color: white; font-size: 1.5rem; margin-top: 15px; text-align: center; width: 100%; font-weight: 700; }
-        
-        #connection-status { 
-            color: white; font-size: 0.9rem; margin-top: 25px; 
-            opacity: 0.9; text-align: center; margin-bottom: 20px;
-        }
-
-        /* --- OUTROS --- */
-        #offline-screen { display: none; z-index: 10002; justify-content: center; }
-        .offline-message { color: white; font-size: 1.2rem; text-align: center; margin-top: 20px; padding: 0 20px; }
-        #install-btn { display: none; position: fixed; bottom: 25px; right: 25px; background-color: white; color: #6105e8; border: none; border-radius: 50px; padding: 12px 20px; font-weight: 700; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: pointer; z-index: 5000; align-items: center; gap: 8px; animation: slideUp 1s ease-out; }
-
-        /* Modal */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.6); z-index: 20000;
-            display: flex; justify-content: center; align-items: center;
-            opacity: 0; visibility: hidden; transition: opacity 0.3s ease;
-        }
-        .modal-overlay.active { opacity: 1; visibility: visible; }
-        .modal-box {
-            background-color: white; width: 85%; max-width: 320px;
-            border-radius: 20px; padding: 30px 20px;
-            text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            transform: scale(0.8); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .modal-overlay.active .modal-box { transform: scale(1); }
-        .modal-icon { font-size: 3rem; margin-bottom: 15px; display: block; }
-        .modal-title { color: #6105e8; font-size: 1.4rem; font-weight: 700; margin-bottom: 10px; font-family: 'Poppins', sans-serif; }
-        .modal-text { color: #555; font-size: 0.95rem; margin-bottom: 25px; line-height: 1.5; }
-        .modal-btn { background-color: #6105e8; color: white; border: none; padding: 12px 30px; border-radius: 50px; font-weight: 600; font-size: 1rem; cursor: pointer; width: 100%; }
-        .modal-btn:active { background-color: #4a04b0; transform: scale(0.98); }
-
-        @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-3px); } }
-        @keyframes driveTruck { 0% { left: 0; } 90% { left: calc(95% - 60px); } 100% { left: calc(95% - 60px); } }
-        @keyframes fillBar { 0% { width: 0%; } 90% { width: 95%; } 100% { width: 95%; } }
-        @keyframes slideUp { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        iframe { display: block; border: none; width: 100vw; height: calc(100vh - 1px); background-color: #6105e8; opacity: 0; position: relative; z-index: 1; transition: opacity 0.8s ease-in; }
-        .ptr--icon { color: white !important; }
+        /* Estilo Iframe e Loading */
+        iframe { width: 100vw; height: 100vh; border: none; opacity: 0; transition: opacity 0.5s ease; }
+        .loading-progress-container { width: 80%; max-width: 280px; position: relative; }
+        .progress-track { height: 4px; background: rgba(255,255,255,0.2); border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: white; transition: width 0.35s linear; }
     </style>
 </head>
 <body>
 
     <div id="selection-screen">
         <div class="content-wrapper">
-            <div class="welcome-text">Bem vindo ao</div>
+            <div style="color:white; opacity:0.8; font-weight:300; letter-spacing:1px">BEM-VINDO AO</div>
             <div class="brand-text">Ways</div>
-            <div class="unit-select-wrapper">
+            
+            <div class="custom-select-container">
                 <select id="unit-select">
                     <option value="" disabled selected>Selecione sua Unidade</option>
                     <option value="itaquera">Itaquera</option>
@@ -179,274 +120,100 @@
                     <option value="cecam">CECAM</option>
                 </select>
             </div>
+
             <label class="remember-container">
-                <input type="checkbox" id="remember-check" class="remember-checkbox">
+                <input type="checkbox" id="remember-check" style="display:none">
+                <div class="checkbox-custom"></div>
                 Lembrar minha escolha
             </label>
+
             <button class="enter-btn" onclick="confirmarUnidade()">ACESSAR</button>
         </div>
         
-        <div class="footer-container">
-            <img src="MesaLogo.png" alt="Logo" class="footer-logo">
-            <div class="powered-by">
-                Powered with <span style="color: #FFFFFF;">&#10084;</span> by <strong>Mesaque</strong>
-            </div>
+        <div class="content-wrapper" style="flex-grow:0; margin-bottom:20px">
+            <img src="MesaLogo.png" class="footer-logo">
+            <div class="powered-by">Powered by <strong>Mesaque</strong></div>
         </div>
     </div>
 
     <div id="loading-screen" style="display: none;"> 
         <div class="content-wrapper">
             <div class="loading-progress-container">
-                <div class="truck-wrapper">
-                    <svg class="truck-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M48 0C21.5 0 0 21.5 0 48V368c0 26.5 21.5 48 48 48H64c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288 256 237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zM416 160h50.7L544 237.3V256H416V160zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
-                </div>
-                <div class="progress-track"><div class="progress-fill"></div></div>
-                <div id="progress-text">0%</div>
-            </div>
-            <div id="connection-status">Iniciando...</div>
-        </div>
-        
-        <div class="footer-container">
-            <div class="switch-unit-card" onclick="resetarEscolha()">
-                Trocar Unidade
-            </div>
-            
-            <img src="MesaLogo.png" alt="Logo" class="footer-logo">
-            <div class="powered-by">
-                Powered with <span style="color: #FFFFFF;">&#10084;</span> by <strong>Mesaque</strong>
+                <div class="progress-track"><div class="progress-fill" id="fill"></div></div>
+                <div id="progress-text" style="color:white; text-align:center; margin-top:15px; font-weight:600">0%</div>
             </div>
         </div>
     </div>
 
-    <div id="offline-screen">
-        <svg class="truck-icon" style="animation: none; margin-bottom: 20px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M48 0C21.5 0 0 21.5 0 48V368c0 26.5 21.5 48 48 48H64c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288 256 237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zM416 160h50.7L544 237.3V256H416V160zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
-        <div class="offline-message">
-            Sem conexão com a internet...<br>
-            <span style="font-size: 0.9rem; opacity: 0.8;">Aguardando sinal para reconectar.</span>
-        </div>
-    </div>
-
-    <div id="custom-modal" class="modal-overlay">
-        <div class="modal-box">
-            <span class="modal-icon">🚧</span>
-            <div class="modal-title">Em Construção</div>
-            <div class="modal-text" id="modal-msg">Esta unidade está sendo preparada para você.</div>
-            <button class="modal-btn" onclick="fecharModal()">Entendi</button>
-        </div>
-    </div>
-
-    <button id="install-btn">
-        <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 12.293V.5A.5.5 0 0 1 8 0z"/></svg>
-        Instalar App
-    </button>
-
-    <div id="app-wrapper">
     <iframe id="app-frame" src="" allow="geolocation"></iframe>
-    </div>
 
     <script>
-        // 1. DEFINIÇÕES GLOBAIS
         const UNIDADES = {
             itaquera: "https://script.google.com/macros/s/AKfycbwrojl-j-npRoBCWNu6hxQ2kJJ9hoRHi7AD2-bRK6zAJ0x-bM06mbXjs1G2bsw-YIVy/exec",
-            carmo: "",
-            interlagos: "",
-            campolimpo: "",
-            cecam: "https://script.google.com/macros/s/AKfycbyxlrK1vuSQr5XnvBbfiRBHmrfdmwXX9TVihQAKyxTD7Im2EhIzmmcmQWQABodEUIJN/exec"
-        };
-        const NOMES_BONITOS = {
-            itaquera: "Itaquera",
-            carmo: "Carmo",
-            interlagos: "Interlagos",
-            campolimpo: "Campo Limpo",
-            cecam: "CECAM"
+            cecam: "https://script.google.com/macros/s/AKfycbyxlrK1vuSQr5XnvBbfiRBHmrfdmwXX9TVihQAKyxTD7Im2EhIzmmcmQWQABodEUIJN/exec",
+            carmo: "", interlagos: "", campolimpo: ""
         };
 
-        const selectionScreen = document.getElementById('selection-screen');
-        const loadingScreen = document.getElementById('loading-screen');
-        const offlineScreen = document.getElementById('offline-screen');
-        const unitSelect = document.getElementById('unit-select');
-        const rememberCheck = document.getElementById('remember-check');
-        const connectionStatus = document.getElementById('connection-status');
-        const progressText = document.getElementById('progress-text');
-        const installBtn = document.getElementById('install-btn');
-        const iframe = document.getElementById('app-frame');
-        
-        const customModal = document.getElementById('custom-modal');
-        const modalMsg = document.getElementById('modal-msg');
-        
         let urlAtual = "";
         let appCarregou = false;
-        let percentInterval;
+        let timeoutReload;
 
-        // 2. FUNÇÕES LÓGICAS
-        function startPercentage() {
-            let percentCounter = 0;
-            progressText.innerText = "0%";
-            clearInterval(percentInterval);
-            percentInterval = setInterval(() => {
-                if (percentCounter < 99) { percentCounter++; progressText.innerText = percentCounter + "%"; } 
-                else { clearInterval(percentInterval); }
-            }, 35);
-        }
-
-        function esconderLoading() {
-            if (appCarregou) {
-                loadingScreen.style.opacity = '0';
-                iframe.style.opacity = '1';
-                setTimeout(() => { loadingScreen.style.display = 'none'; }, 500);
-            }
-        }
-
-        function forcartRecarregamento() {
-            if (navigator.onLine && urlAtual) {
-                appCarregou = false;
-                loadingScreen.style.display = 'flex';
-                setTimeout(() => { loadingScreen.style.opacity = '1'; }, 10);
-                startPercentage();
-                
-                const container = document.querySelector('.loading-progress-container');
-                const novoContainer = container.cloneNode(true);
-                container.parentNode.replaceChild(novoContainer, container);
-                
-                let limpa = urlAtual.split('?')[0];
-                iframe.src = limpa + '?t=' + new Date().getTime();
-                
-                setTimeout(() => { if(appCarregou) esconderLoading(); }, 2500);
-            }
-        }
-
-        function iniciarSistema(chaveUnidade) {
-            connectionStatus.innerText = "Conectando à unidade " + NOMES_BONITOS[chaveUnidade] + "...";
-            urlAtual = UNIDADES[chaveUnidade];
-
-            selectionScreen.style.opacity = '0';
-            setTimeout(() => { selectionScreen.style.display = 'none'; }, 500);
+        function iniciarSistema(chave) {
+            urlAtual = UNIDADES[chave];
+            document.getElementById('selection-screen').style.opacity = '0';
+            setTimeout(() => { document.getElementById('selection-screen').style.display = 'none'; }, 500);
             
-            loadingScreen.style.display = 'flex';
-            startPercentage();
-            iframe.src = urlAtual;
+            document.getElementById('loading-screen').style.display = 'flex';
+            const fill = document.getElementById('fill');
+            const txt = document.getElementById('progress-text');
+            let p = 0;
+            let int = setInterval(() => {
+                p++; fill.style.width = p + '%'; txt.innerText = p + '%';
+                if(p >= 99) clearInterval(int);
+            }, 30);
+
+            document.getElementById('app-frame').src = urlAtual;
         }
 
-        function abrirModal(unidadeNome) {
-            modalMsg.innerText = "A unidade " + unidadeNome + " ainda está em construção. Em breve estará disponível!";
-            customModal.classList.add('active');
-        }
-        function fecharModal() { customModal.classList.remove('active'); }
-
-        function confirmarUnidade() {
-            const escolha = unitSelect.value;
-            if (!escolha) { 
-                modalMsg.innerText = "Por favor, selecione uma unidade na lista para continuar.";
-                customModal.classList.add('active');
-                return; 
-            }
-            if (UNIDADES[escolha] === "") { abrirModal(NOMES_BONITOS[escolha]); return; }
-
-            if (rememberCheck.checked) { localStorage.setItem('ways_unidade_salva', escolha); } 
-            else { localStorage.removeItem('ways_unidade_salva'); }
-
-            iniciarSistema(escolha);
-        }
-
-        function resetarEscolha() {
-            localStorage.removeItem('ways_unidade_salva');
-            window.location.reload();
-        }
-
-        // 3. LISTENERS
-        iframe.onload = function() { 
-            if(iframe.src && iframe.src !== window.location.href) {
-                appCarregou = true;
-                if(navigator.onLine) esconderLoading();
-            }
+        document.getElementById('app-frame').onload = () => {
+            appCarregou = true;
+            document.getElementById('loading-screen').style.opacity = '0';
+            document.getElementById('app-frame').style.opacity = '1';
+            setTimeout(() => { document.getElementById('loading-screen').style.display = 'none'; }, 500);
         };
 
-        try {
-            if (typeof PullToRefresh !== 'undefined') {
-                PullToRefresh.init({
-                    mainElement: '#app-wrapper', triggerElement: '#app-wrapper',
-                    onRefresh: function() { forcartRecarregamento(); },
-                    distThreshold: 70,
-                    iconArrow: '<svg width="24" height="24" fill="white" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/><path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/></svg>',
-                    iconRefreshing: '<svg width="24" height="24" fill="white" viewBox="0 0 16 16" style="animation: spin 1s linear infinite;"><path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/><path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/></svg>',
-                    instructionsPullToRefresh: "Puxe para recarregar", instructionsReleaseToRefresh: "Solte para recarregar", instructionsRefreshing: "Recarregando..."
-                });
-            }
-        } catch (e) { console.error(e); }
-
-        setTimeout(() => {
-            if (!appCarregou && navigator.onLine && urlAtual) { appCarregou = true; esconderLoading(); }
-        }, 10000);
-
-        if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js'); }
-
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; installBtn.style.display = 'flex'; });
-        installBtn.addEventListener('click', async () => {
-            if (deferredPrompt) { deferredPrompt.prompt(); const { outcome } = await deferredPrompt.userChoice; if (outcome === 'accepted') installBtn.style.display = 'none'; deferredPrompt = null; }
-        });
-
-        function atualizarStatusRede() {
-            if (navigator.onLine) {
-                offlineScreen.style.display = 'none';
-                if (appCarregou) forcartRecarregamento();
-            } else { offlineScreen.style.display = 'flex'; iframe.style.opacity = '0'; }
+        function confirmarUnidade() {
+            const sel = document.getElementById('unit-select').value;
+            if(!sel) return alert("Selecione uma unidade");
+            if(UNIDADES[sel] === "") return alert("Unidade em construção!");
+            if(document.getElementById('remember-check').checked) localStorage.setItem('ways_unidade', sel);
+            iniciarSistema(sel);
         }
-        window.addEventListener('online', atualizarStatusRede);
-        window.addEventListener('offline', atualizarStatusRede);
-        
-        // --- CRONÔMETRO DE INATIVIDADE E CORREÇÃO DE TELA BRANCA ---
-        let horaQueSaiu = Date.now();
-        
-        document.addEventListener("visibilitychange", function() {
-            // 1. USUÁRIO SAIU (Minimizou ou trocou aba)
-            if (document.visibilityState === "hidden") { 
-                horaQueSaiu = Date.now(); 
-                console.log("Usuário saiu. Marcando hora.");
-            } 
-            
-            // 2. USUÁRIO VOLTOU
-            else if (document.visibilityState === "visible") {
-                console.log("Usuário voltou.");
-                
-                // Calcula quantos segundos ficou fora
-                const segundosFora = (Date.now() - horaQueSaiu) / 1000;
-                
-                // Se ficou fora mais de 3 segundos OU se a URL sumiu
-                // (Reduzi de 600 para 3 para garantir que a tela branca nunca fique)
-                if ((segundosFora > 3 || !iframe.src) && urlAtual) {
-                    console.log("Forçando recarregamento visual...");
-                    
-                    // Mostra o loading imediatamente para esconder a tela branca
-                    loadingScreen.style.display = 'flex';
-                    loadingScreen.style.opacity = '1';
-                    
-                    // Força o navegador a redesenhar o iframe (Truque do display)
-                    iframe.style.display = 'none';
-                    setTimeout(() => {
-                        iframe.style.display = 'block';
-                        forcartRecarregamento();
-                    }, 50);
+
+        // LÓGICA DE PERSISTÊNCIA (AQUI É O SEGREDO)
+        let horaSaida;
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "hidden") {
+                horaSaida = Date.now();
+            } else {
+                const tempoFora = (Date.now() - horaSaida) / 1000;
+                // SÓ RECARREGA SE FICAR MAIS DE 10 MINUTOS (600 segundos)
+                if (tempoFora > 600 && urlAtual) {
+                    window.location.reload();
+                } else {
+                    // Se a tela ficar branca, este pequeno truque força o navegador a redesenhar o Iframe sem recarregar a URL
+                    const frame = document.getElementById('app-frame');
+                    frame.style.display = 'none';
+                    setTimeout(() => { frame.style.display = 'block'; }, 10);
                 }
             }
         });
 
-        // 3. CORREÇÃO EXTRA PARA BOTÃO VOLTAR (BFCACHE)
-        // Se o usuário usou o botão voltar e o navegador restaurou a página do cache
-        window.addEventListener('pageshow', function(event) {
-            if (event.persisted && urlAtual) {
-                console.log("Página restaurada do cache. Recarregando...");
-                forcartRecarregamento();
-            }
-        });
-        
-        function verificarMemoria() {
-            const unidadeSalva = localStorage.getItem('ways_unidade_salva');
-            if (unidadeSalva && UNIDADES[unidadeSalva]) {
-                iniciarSistema(unidadeSalva);
-            }
-        }
-        verificarMemoria();
+        // Verifica memória ao abrir
+        const salva = localStorage.getItem('ways_unidade');
+        if(salva) iniciarSistema(salva);
+
+        if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js'); }
     </script>
 </body>
 </html>
