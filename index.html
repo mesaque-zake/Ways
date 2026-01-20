@@ -26,10 +26,47 @@
             overflow: hidden;
         }
 
-        /* Camadas de Tela */
+        /* --- CAMADA DE FUNDO ANIMADA (CYBERPUNK) --- */
+        #bg-animation-layer {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; /* Fica acima do roxo, mas abaixo do vidro */
+            overflow: hidden; pointer-events: none;
+        }
+
+        .neon-truck {
+            position: absolute;
+            width: 50px; height: auto;
+            fill: #FFFFFF;
+            opacity: 0.5; /* Levemente transparente */
+            /* O SEGREDO DO NEON: Sombra branca brilhante */
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
+        }
+
+        /* Animação Esquerda -> Direita */
+        @keyframes driveRight {
+            from { left: -15%; transform: scaleX(1); }
+            to { left: 115%; transform: scaleX(1); }
+        }
+        /* Animação Direita -> Esquerda (Invertido) */
+        @keyframes driveLeft {
+            from { left: 115%; transform: scaleX(-1); }
+            to { left: -15%; transform: scaleX(-1); }
+        }
+
+        /* --- CAMADA DE VIDRO FOSCO (BLUR) --- */
+        #glass-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2; /* Fica acima dos caminhões */
+            backdrop-filter: blur(4px); /* Desfoca os caminhões */
+            -webkit-backdrop-filter: blur(4px);
+            background: rgba(97, 5, 232, 0.2); /* Tintura roxa leve para uniformizar */
+            pointer-events: none;
+        }
+
+        /* --- INTERFACE (Fica acima de tudo) --- */
         #selection-screen, #loading-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #6105e8;
+            /* Sem cor de fundo sólida, para ver os caminhões através */
             display: flex; flex-direction: column; 
             align-items: center;
             z-index: 9999; 
@@ -38,43 +75,28 @@
             box-sizing: border-box;
         }
 
-        /* Título e Cabeçalho (Mais ao topo) */
         .header-section {
-            margin-top: 4vh;
-            text-align: center;
-            margin-bottom: 40px;
+            margin-top: 4vh; text-align: center; margin-bottom: 40px;
             animation: slideDown 0.8s ease-out;
         }
         .welcome-text { color: white; font-size: 1.1rem; opacity: 0.9; font-weight: 300; letter-spacing: 1px; }
         .brand-text { 
             font-family: 'Dancing Script', cursive; 
-            color: white; 
-            font-size: 6rem; 
-            line-height: 1;
-            margin-top: 5px;
+            color: white; font-size: 6rem; line-height: 1; margin-top: 5px;
             text-shadow: 0 10px 20px rgba(0,0,0,0.3);
         }
 
-        /* --- MENU CUSTOMIZADO (SEM TAG SELECT) --- */
+        /* Menu Customizado */
         .custom-dropdown-container {
-            position: relative;
-            width: 100%; max-width: 320px;
-            margin-bottom: 25px;
-            z-index: 100; /* Ficar acima dos outros */
+            position: relative; width: 100%; max-width: 320px; margin-bottom: 25px; z-index: 100;
         }
-
         .dropdown-trigger {
             background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 18px;
-            padding: 18px 25px;
-            color: white;
-            font-size: 1rem;
-            display: flex; justify-content: space-between; align-items: center;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 18px; padding: 18px 25px;
+            color: white; font-size: 1rem; display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             transition: background 0.2s;
         }
         .dropdown-trigger:active { background: rgba(255,255,255,0.25); }
@@ -83,47 +105,23 @@
 
         .dropdown-options {
             position: absolute; top: 110%; left: 0; width: 100%;
-            background: rgba(40, 10, 90, 0.95); /* Fundo escuro levemente roxo para contraste */
-            backdrop-filter: blur(15px);
-            border-radius: 18px;
-            border: 1px solid rgba(255,255,255,0.1);
-            overflow: hidden;
-            display: none; /* Escondido por padrão */
-            flex-direction: column;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-            animation: fadeInDrop 0.2s ease-out;
+            background: rgba(40, 10, 90, 0.9); backdrop-filter: blur(20px);
+            border-radius: 18px; border: 1px solid rgba(255,255,255,0.1);
+            overflow: hidden; display: none; flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4); animation: fadeInDrop 0.2s ease-out;
         }
         .dropdown-option {
-            padding: 15px 25px;
-            color: white;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            cursor: pointer;
-            transition: background 0.2s;
+            padding: 15px 25px; color: white; border-bottom: 1px solid rgba(255,255,255,0.05);
+            cursor: pointer; transition: background 0.2s;
         }
         .dropdown-option:last-child { border-bottom: none; }
         .dropdown-option:active { background: rgba(255,255,255,0.2); }
 
-        /* Controles Pós-Seleção */
-        #post-selection { 
-            display: none; 
-            flex-direction: column; 
-            align-items: center; 
-            width: 100%; 
-            animation: fadeIn 0.5s ease-out forwards; 
-        }
-
-        .remember-container {
-            display: flex; align-items: center; color: white; font-size: 0.9rem; margin-bottom: 30px; cursor: pointer;
-            padding: 10px; opacity: 0.9;
-        }
-        .checkbox-ui {
-            width: 20px; height: 20px; border: 2px solid white; border-radius: 6px; margin-right: 12px;
-            position: relative; transition: all 0.2s;
-        }
+        #post-selection { display: none; flex-direction: column; align-items: center; width: 100%; animation: fadeIn 0.5s ease-out forwards; }
+        .remember-container { display: flex; align-items: center; color: white; font-size: 0.9rem; margin-bottom: 30px; cursor: pointer; padding: 10px; opacity: 0.9; }
+        .checkbox-ui { width: 20px; height: 20px; border: 2px solid white; border-radius: 6px; margin-right: 12px; position: relative; transition: all 0.2s; }
         input:checked + .checkbox-ui { background: white; }
-        input:checked + .checkbox-ui::after {
-            content: '✓'; color: #6105e8; position: absolute; font-size: 14px; top: -2px; left: 3px; font-weight: bold;
-        }
+        input:checked + .checkbox-ui::after { content: '✓'; color: #6105e8; position: absolute; font-size: 14px; top: -2px; left: 3px; font-weight: bold; }
 
         .enter-btn {
             background-color: white; color: #6105e8; border: none; padding: 16px 70px;
@@ -132,42 +130,27 @@
         }
         .enter-btn:active { transform: scale(0.95); }
 
-        /* Rodapé Compartilhado */
-        .footer-container {
-            margin-top: auto; /* Empurra para baixo */
-            display: flex; flex-direction: column; align-items: center;
-            opacity: 0.8;
-            animation: fadeIn 1s 1s forwards;
-        }
+        .footer-container { margin-top: auto; display: flex; flex-direction: column; align-items: center; opacity: 0.8; animation: fadeIn 1s 1s forwards; }
         .footer-logo { width: 90px; margin-bottom: 10px; }
         .powered-by { font-size: 0.75rem; color: rgba(255, 255, 255, 0.7); font-weight: 300; }
 
-        /* TELA DE LOADING */
+        /* Loading */
         #loading-screen { justify-content: center; z-index: 10000; }
-        
-        .loading-center {
-            flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%;
-        }
+        .loading-center { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; }
         .progress-track { width: 200px; height: 5px; background: rgba(255,255,255,0.2); border-radius: 10px; overflow: hidden; margin-bottom: 15px; }
         .progress-fill { height: 100%; width: 0%; background: white; transition: width 0.1s linear; }
         #progress-text { color: white; font-weight: 600; font-size: 1.2rem; }
-
         .switch-unit-btn {
-            margin-top: auto; margin-bottom: 20px;
-            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
-            padding: 12px 25px; border-radius: 30px; color: white; font-size: 0.9rem;
-            backdrop-filter: blur(5px); cursor: pointer;
+            margin-top: auto; margin-bottom: 20px; background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2); padding: 12px 25px; border-radius: 30px;
+            color: white; font-size: 0.9rem; backdrop-filter: blur(5px); cursor: pointer;
         }
 
-        /* Iframe */
-        #app-frame { position: fixed; top: 0; left: 0; width: 100%; height: 100%; border: none; z-index: 1; }
-
-        /* Modal */
+        #app-frame { position: fixed; top: 0; left: 0; width: 100%; height: 100%; border: none; z-index: 0; }
+        
         .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.8); z-index: 20000;
-            display: none; justify-content: center; align-items: center;
-            backdrop-filter: blur(5px);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8);
+            z-index: 20000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px);
         }
         .modal-box { background: white; padding: 30px; border-radius: 25px; text-align: center; width: 80%; max-width: 300px; }
 
@@ -179,6 +162,18 @@
 <body>
 
     <iframe id="app-frame" src=""></iframe>
+
+    <div id="bg-animation-layer">
+        <svg class="neon-truck" style="top: 15%; animation: driveRight 6s linear infinite;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M48 0C21.5 0 0 21.5 0 48V368c0 26.5 21.5 48 48 48H64c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288 256 237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zM416 160h50.7L544 237.3V256H416V160zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
+        
+        <svg class="neon-truck" style="top: 45%; animation: driveLeft 12s linear infinite;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M48 0C21.5 0 0 21.5 0 48V368c0 26.5 21.5 48 48 48H64c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288 256 237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zM416 160h50.7L544 237.3V256H416V160zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
+        
+        <svg class="neon-truck" style="top: 75%; animation: driveRight 8s linear infinite; animation-delay: 2s" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M48 0C21.5 0 0 21.5 0 48V368c0 26.5 21.5 48 48 48H64c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288 256 237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zM416 160h50.7L544 237.3V256H416V160zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
+        
+        <svg class="neon-truck" style="top: 30%; height: 30px; opacity: 0.3; animation: driveLeft 15s linear infinite; animation-delay: 5s" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M48 0C21.5 0 0 21.5 0 48V368c0 26.5 21.5 48 48 48H64c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288 256 237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zM416 160h50.7L544 237.3V256H416V160zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
+    </div>
+
+    <div id="glass-overlay"></div>
 
     <div id="selection-screen">
         <div class="header-section">
@@ -252,27 +247,20 @@
         let urlAtual = "";
         let horaSaida = Date.now();
 
-        // --- Lógica do Menu Customizado ---
         function toggleDropdown() {
             const list = document.getElementById('dropdown-options');
             const trigger = document.querySelector('.dropdown-trigger');
-            if (list.style.display === 'flex') {
-                list.style.display = 'none';
-                trigger.classList.remove('active');
-            } else {
-                list.style.display = 'flex';
-                trigger.classList.add('active');
-            }
+            if (list.style.display === 'flex') { list.style.display = 'none'; trigger.classList.remove('active'); }
+            else { list.style.display = 'flex'; trigger.classList.add('active'); }
         }
 
         function selectUnit(value, text) {
             document.getElementById('unit-value').value = value;
             document.getElementById('selected-text').innerText = text;
-            toggleDropdown(); // Fecha o menu
-            document.getElementById('post-selection').style.display = 'flex'; // Mostra botão
+            toggleDropdown();
+            document.getElementById('post-selection').style.display = 'flex';
         }
 
-        // Fecha o menu se clicar fora
         window.onclick = function(event) {
             if (!event.target.matches('.dropdown-trigger') && !event.target.matches('.dropdown-trigger *')) {
                 document.getElementById('dropdown-options').style.display = 'none';
@@ -285,14 +273,12 @@
         function confirmarUnidade() {
             const escolha = document.getElementById('unit-value').value;
             if (!escolha) return;
-
             if (UNIDADES[escolha] === "") {
                 const text = document.getElementById('selected-text').innerText;
                 document.getElementById('modal-msg').innerText = "A unidade " + text + " ainda está em construção.";
                 document.getElementById('custom-modal').style.display = 'flex';
                 return;
             }
-            
             if (document.getElementById('remember-check').checked) localStorage.setItem('ways_unidade_salva', escolha);
             iniciarSistema(escolha);
         }
@@ -300,11 +286,12 @@
         function iniciarSistema(chave) {
             urlAtual = UNIDADES[chave];
             
-            // Transição de telas
+            // SOME A TELA DE SELEÇÃO
             const selScreen = document.getElementById('selection-screen');
             selScreen.style.opacity = '0';
             selScreen.style.visibility = 'hidden';
             
+            // INICIA LOADING
             const loadScreen = document.getElementById('loading-screen');
             loadScreen.style.display = 'flex';
             
@@ -312,21 +299,30 @@
             const fill = document.getElementById('fill');
             const txt = document.getElementById('progress-text');
             
+            // Elementos de fundo que também devem sumir
+            const bgAnimation = document.getElementById('bg-animation-layer');
+            const glassOverlay = document.getElementById('glass-overlay');
+
             const interval = setInterval(() => {
                 p++;
                 fill.style.width = p + '%';
                 txt.innerText = p + '%';
                 
-                // DESAPARECER TUDO NO FINAL
+                // DESAPARECER TUDO NO FINAL (Inclusive o background animado)
                 if (p > 85) {
-                    loadScreen.style.opacity = '0'; // Loading, Logo, Botão - TUDO some
+                    loadScreen.style.opacity = '0'; 
+                    bgAnimation.style.opacity = '0'; // Some os caminhões
+                    glassOverlay.style.opacity = '0'; // Some o vidro
                 }
 
                 if (p >= 100) {
                     clearInterval(interval);
-                    setTimeout(() => { loadScreen.style.display = 'none'; }, 800);
+                    setTimeout(() => { 
+                        loadScreen.style.display = 'none';
+                        bgAnimation.style.display = 'none'; // Remove da renderização
+                    }, 800);
                 }
-            }, 30); // Velocidade do carregamento
+            }, 30); 
 
             document.getElementById('app-frame').src = urlAtual;
         }
@@ -336,7 +332,6 @@
             window.location.reload();
         }
 
-        // Lógica dos 10 Minutos
         document.addEventListener("visibilitychange", function() {
             if (document.visibilityState === "hidden") {
                 horaSaida = Date.now();
@@ -346,16 +341,14 @@
                     window.location.reload();
                 } else {
                     const frame = document.getElementById('app-frame');
-                    frame.style.opacity = '0.99'; // Truque visual
+                    frame.style.opacity = '0.99'; 
                     setTimeout(() => { frame.style.opacity = '1'; }, 10);
                 }
             }
         });
 
-        // Auto-login se já tiver salvo
         const salva = localStorage.getItem('ways_unidade_salva');
         if (salva && UNIDADES[salva]) {
-            // Se já tem salvo, pula direto pro loading, nem mostra a seleção
             document.getElementById('selection-screen').style.display = 'none';
             iniciarSistema(salva);
         }
