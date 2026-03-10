@@ -26,50 +26,61 @@
             overflow: hidden;
         }
 
-        /* --- CAMADA DE FUNDO ANIMADA (CYBERPUNK) --- */
+        /* --- CAMADA DE FUNDO ANIMADA OTIMIZADA (CYBERPUNK HIGHWAY) --- */
         #bg-animation-layer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1; /* Fica acima do roxo, mas abaixo do vidro */
+            z-index: 1;
             overflow: hidden; pointer-events: none;
+            background-color: #5504cd;
+            transition: opacity 0.8s ease;
         }
 
         .neon-truck {
-          position: absolute;
-          width: 50px; height: auto;
-          fill: #FFFFFF;
-          opacity: 0.7;
-          filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
-          
-          /* ADICIONE ISSO PARA FORÇAR O CELULAR A RENDERIZAR: */
-          will-change: transform;
-          transform: translateZ(0); 
-         }
-
-        /* Animação Esquerda -> Direita */
-        @keyframes driveRight {
-            from { left: -15%; transform: scaleX(1); }
-            to { left: 115%; transform: scaleX(1); }
-        }
-        /* Animação Direita -> Esquerda (Invertido) */
-        @keyframes driveLeft {
-            from { left: 115%; transform: scaleX(-1); }
-            to { left: -15%; transform: scaleX(-1); }
+            position: absolute;
+            height: auto;
+            will-change: transform;
+            transform: translateZ(0); 
+            opacity: 0; 
         }
 
-        /* --- CAMADA DE VIDRO FOSCO (BLUR) --- */
+        .truck-white { fill: #FFFFFF; filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8)); }
+        .truck-cyan  { fill: #00FFFF; filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.7)); }
+        .truck-pink  { fill: #FF00FF; filter: drop-shadow(0 0 10px rgba(255, 0, 255, 0.7)); }
+
+        @keyframes driveRightDynamic {
+            0%   { left: -25%; opacity: 0; }
+            5%   { opacity: var(--truck-opacity); }
+            90%  { opacity: var(--truck-opacity); }
+            100% { left: 115%; opacity: 0; transform: scaleX(1); }
+        }
+
+        @keyframes driveLeftDynamic {
+            0%   { left: 115%; opacity: 0; }
+            5%   { opacity: var(--truck-opacity); }
+            90%  { opacity: var(--truck-opacity); }
+            100% { left: -25%; opacity: 0; transform: scaleX(-1); }
+        }
+
+        .neon-truck:nth-child(5n+1) { --truck-opacity: 0.3; width: 25px; top: 10%; animation: driveRightDynamic 22s ease-in-out infinite; animation-delay: 1s; }
+        .neon-truck:nth-child(5n+2) { --truck-opacity: 0.5; width: 35px; top: 25%; animation: driveLeftDynamic 18s ease-in-out infinite; animation-delay: 5s; }
+        .neon-truck:nth-child(5n+3) { --truck-opacity: 0.6; width: 50px; top: 50%; animation: driveRightDynamic 14s ease-in-out infinite; animation-delay: 3s; }
+        .neon-truck:nth-child(5n+4) { --truck-opacity: 0.8; width: 70px; top: 75%; animation: driveLeftDynamic 9s ease-in infinite; animation-delay: 0s; }
+        .neon-truck:nth-child(5n+5) { --truck-opacity: 0.9; width: 100px; top: 88%; animation: driveRightDynamic 6s linear infinite; animation-delay: 2s; }
+
+        /* --- CAMADA DE VIDRO FOSCO OTIMIZADA --- */
         #glass-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 2; /* Fica acima dos caminhões */
-            backdrop-filter: blur(4px); /* Desfoca os caminhões */
-            -webkit-backdrop-filter: blur(4px);
-            background: rgba(97, 5, 232, 0.2); /* Tintura roxa leve para uniformizar */
+            z-index: 2;
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+            background: rgba(97, 5, 232, 0.15); 
             pointer-events: none;
+            transition: opacity 0.8s ease, background 0.3s ease;
         }
 
-        /* --- INTERFACE (Fica acima de tudo) --- */
+        /* --- INTERFACE --- */
         #selection-screen, #loading-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            /* Sem cor de fundo sólida, para ver os caminhões através */
             display: flex; flex-direction: column; 
             align-items: center;
             z-index: 9999; 
@@ -89,7 +100,6 @@
             text-shadow: 0 10px 20px rgba(0,0,0,0.3);
         }
 
-        /* Menu Customizado */
         .custom-dropdown-container {
             position: relative; width: 100%; max-width: 320px; margin-bottom: 25px; z-index: 100;
         }
@@ -137,19 +147,62 @@
         .footer-logo { width: 90px; margin-bottom: 10px; }
         .powered-by { font-size: 0.75rem; color: rgba(255, 255, 255, 0.7); font-weight: 300; }
 
-        /* Loading */
+        /* --- COMPONENTE: SEMÁFORO DE CARREGAMENTO --- */
         #loading-screen { justify-content: center; z-index: 10000; }
         .loading-center { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; }
-        .progress-track { width: 200px; height: 5px; background: rgba(255,255,255,0.2); border-radius: 10px; overflow: hidden; margin-bottom: 15px; }
-        .progress-fill { height: 100%; width: 0%; background: white; transition: width 0.1s linear; }
-        #progress-text { color: white; font-weight: 600; font-size: 1.2rem; }
+        
+        #traffic-light {
+            background: #111; border-radius: 40px; padding: 20px 15px;
+            display: flex; flex-direction: column; gap: 15px; border: 2px solid #2a2a2a;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6), inset 0 0 15px rgba(0,0,0,0.9);
+            position: relative; margin-bottom: 30px; z-index: 10001;
+        }
+
+        .light {
+            width: 60px; height: 60px; border-radius: 50%; background: #222; 
+            box-shadow: inset 0 5px 10px rgba(0,0,0,0.6);
+            transition: background 0.2s ease, box-shadow 0.2s ease; position: relative;
+        }
+
+        .light.red.active { background: #ff3333; box-shadow: 0 0 40px #ff3333, inset 0 0 15px rgba(255,255,255,0.6); }
+        .light.yellow.active { background: #ffcc00; box-shadow: 0 0 40px #ffcc00, inset 0 0 15px rgba(255,255,255,0.6); }
+        .light.green.active { background: #00ff00; box-shadow: 0 0 40px #00ff00, inset 0 0 15px rgba(255,255,255,0.6); }
+
+        #go-text {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.3);
+            color: #ffffff; font-weight: 900; font-size: 1.8rem;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.8); opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 10; pointer-events: none;
+        }
+
+        #go-text.show { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+
         .switch-unit-btn {
             margin-top: auto; margin-bottom: 20px; background: rgba(255,255,255,0.1);
             border: 1px solid rgba(255,255,255,0.2); padding: 12px 25px; border-radius: 30px;
             color: white; font-size: 0.9rem; backdrop-filter: blur(5px); cursor: pointer;
         }
 
-        #app-frame { position: fixed; top: 0; left: 0; width: 100%; height: 100%; border: none; z-index: 0; }
+        /* --- CONTROLE DE ESTADOS GLOBAIS VIA JS --- */
+        #bg-animation-layer.is-stopped .neon-truck { animation-play-state: paused !important; }
+
+        @keyframes warningPulse {
+            0% { background: rgba(255, 165, 0, 0.05); }
+            100% { background: rgba(255, 165, 0, 0.25); }
+        }
+        .glass-warning-pulse { animation: warningPulse 0.4s infinite alternate !important; }
+
+        /* --- IFRAME WRAPPER (Fix para rolagem no iOS/Android) --- */
+        #iframe-wrapper {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch; 
+            z-index: 0;
+        }
+
+        #app-frame { border: none; width: 100%; height: 100%; display: block; }
         
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8);
@@ -164,22 +217,21 @@
 </head>
 <body>
 
-    <iframe 
-     id="app-frame" 
-     src="" 
-     style="border:none; width: 100%; height: 100%;"
-     allow="geolocation https://script.google.com https://*.googleusercontent.com; microphone; camera"
-     sandbox="allow-forms allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation allow-modals"
-    ></iframe>
+    <div id="iframe-wrapper">
+        <iframe 
+         id="app-frame" 
+         src="" 
+         allow="geolocation https://script.google.com https://*.googleusercontent.com; microphone; camera"
+         sandbox="allow-forms allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation allow-modals"
+        ></iframe>
+    </div>
 
     <div id="bg-animation-layer">
-        <svg class="neon-truck" style="top: 15%; animation: driveRight 6s linear infinite;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M48 0C21.5 0 0 21.5 0 48V368c0 26.5 21.5 48 48 48H64c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288 256 237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zM416 160h50.7L544 237.3V256H416V160zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
-        
-        <svg class="neon-truck" style="top: 45%; animation: driveLeft 12s linear infinite;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M48 0C21.5 0 0 21.5 0 48V368c0 26.5 21.5 48 48 48H64c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288 256 237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zM416 160h50.7L544 237.3V256H416V160zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
-        
-        <svg class="neon-truck" style="top: 75%; animation: driveRight 8s linear infinite; animation-delay: 2s" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M48 0C21.5 0 0 21.5 0 48V368c0 26.5 21.5 48 48 48H64c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288 256 237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zM416 160h50.7L544 237.3V256H416V160zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
-        
-        <svg class="neon-truck" style="top: 30%; height: 30px; opacity: 0.3; animation: driveLeft 15s linear infinite; animation-delay: 5s" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M48 0C21.5 0 0 21.5 0 48V368c0 26.5 21.5 48 48 48H64c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288 256 237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zM416 160h50.7L544 237.3V256H416V160zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
+        <svg class="neon-truck truck-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M48 0C21.5 0 0 21.5 0 48V368c0 26.5 21.5 48 48 48H64c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288 256 237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zM416 160h50.7L544 237.3V256H416V160zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
+        <svg class="neon-truck truck-cyan" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M48 0C21.5 0 0 21.5 0 48V368c0 26.5 21.5 48 48 48H64c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288 256 237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zM416 160h50.7L544 237.3V256H416V160zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
+        <svg class="neon-truck truck-pink" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M48 0C21.5 0 0 21.5 0 48V368c0 26.5 21.5 48 48 48H64c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288 256 237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zM416 160h50.7L544 237.3V256H416V160zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
+        <svg class="neon-truck truck-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M48 0C21.5 0 0 21.5 0 48V368c0 26.5 21.5 48 48 48H64c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288 256 237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zM416 160h50.7L544 237.3V256H416V160zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
+        <svg class="neon-truck truck-cyan" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M48 0C21.5 0 0 21.5 0 48V368c0 26.5 21.5 48 48 48H64c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288 256 237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zM416 160h50.7L544 237.3V256H416V160zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
     </div>
 
     <div id="glass-overlay"></div>
@@ -222,13 +274,18 @@
         </div>
     </div>
 
-    <div id="loading-screen" style="display: none;">
+    <div id="loading-screen" style="display: none; opacity: 0;">
         <div class="loading-center">
-            <div class="progress-track"><div class="progress-fill" id="fill"></div></div>
-            <div id="progress-text">0%</div>
+            <div id="traffic-light">
+                <div class="light red" id="light-red"></div>
+                <div class="light yellow" id="light-yellow"></div>
+                <div class="light green" id="light-green">
+                    <span id="go-text">GO!</span>
+                </div>
+            </div>
         </div>
 
-        <div class="switch-unit-btn" onclick="resetarEscolha()">Trocar Unidade</div>
+        <div class="switch-unit-btn" onclick="resetarEscolha()">Cancelar</div>
 
         <div class="footer-container" style="margin-top: 0; margin-bottom: 30px;">
             <img src="MesaLogo.png" class="footer-logo">
@@ -254,7 +311,6 @@
         };
         
         let urlAtual = "";
-        let horaSaida = Date.now();
 
         function toggleDropdown() {
             const list = document.getElementById('dropdown-options');
@@ -295,45 +351,66 @@
         function iniciarSistema(chave) {
             urlAtual = UNIDADES[chave];
             
-            // SOME A TELA DE SELEÇÃO
+            // 1. Ocultar Tela de Seleção suavemente
             const selScreen = document.getElementById('selection-screen');
             selScreen.style.opacity = '0';
-            selScreen.style.visibility = 'hidden';
+            setTimeout(() => { selScreen.style.visibility = 'hidden'; }, 800);
             
-            // INICIA LOADING
+            // 2. Preparar Tela de Loading (Semáforo)
             const loadScreen = document.getElementById('loading-screen');
             loadScreen.style.display = 'flex';
-            
-            let p = 0;
-            const fill = document.getElementById('fill');
-            const txt = document.getElementById('progress-text');
-            
-            // Elementos de fundo que também devem sumir
-            const bgAnimation = document.getElementById('bg-animation-layer');
-            const glassOverlay = document.getElementById('glass-overlay');
+            setTimeout(() => { loadScreen.style.opacity = '1'; }, 50);
 
-            const interval = setInterval(() => {
-                p++;
-                fill.style.width = p + '%';
-                txt.innerText = p + '%';
-                
-                // DESAPARECER TUDO NO FINAL (Inclusive o background animado)
-                if (p > 85) {
-                    loadScreen.style.opacity = '0'; 
-                    bgAnimation.style.opacity = '0'; // Some os caminhões
-                    glassOverlay.style.opacity = '0'; // Some o vidro
-                }
-
-                if (p >= 100) {
-                    clearInterval(interval);
-                    setTimeout(() => { 
-                        loadScreen.style.display = 'none';
-                        bgAnimation.style.display = 'none'; // Remove da renderização
-                    }, 800);
-                }
-            }, 30); 
-
+            // 3. ANTECIPAÇÃO DE CARGA (Download do iframe em background)
             document.getElementById('app-frame').src = urlAtual;
+
+            const bgLayer = document.getElementById('bg-animation-layer');
+            const glassOverlay = document.getElementById('glass-overlay');
+            const lightRed = document.getElementById('light-red');
+            const lightYellow = document.getElementById('light-yellow');
+            const lightGreen = document.getElementById('light-green');
+            const goText = document.getElementById('go-text');
+
+            // --- FASE 1: SINAL VERMELHO ---
+            setTimeout(() => {
+                bgLayer.classList.add('is-stopped'); 
+                lightRed.classList.add('active'); 
+                glassOverlay.style.background = 'rgba(255, 0, 0, 0.15)'; 
+            }, 300);
+
+            // --- FASE 2: SINAL AMARELO ---
+            setTimeout(() => {
+                lightRed.classList.remove('active');
+                lightYellow.classList.add('active'); 
+                glassOverlay.classList.add('glass-warning-pulse'); 
+            }, 1800);
+
+            // --- FASE 3: SINAL VERDE & GO! ---
+            setTimeout(() => {
+                lightYellow.classList.remove('active');
+                glassOverlay.classList.remove('glass-warning-pulse');
+                
+                lightGreen.classList.add('active'); 
+                goText.classList.add('show'); 
+                
+                glassOverlay.style.background = 'rgba(0, 255, 0, 0.15)'; 
+                bgLayer.classList.remove('is-stopped'); 
+            }, 3300);
+
+            // --- FASE 4: TRANSIÇÃO PARA O APP ---
+            setTimeout(() => {
+                loadScreen.style.opacity = '0'; 
+                bgLayer.style.opacity = '0';
+                glassOverlay.style.opacity = '0';
+
+                setTimeout(() => { 
+                    loadScreen.style.display = 'none';
+                    bgLayer.style.display = 'none'; 
+                    glassOverlay.style.display = 'none';
+                    lightGreen.classList.remove('active');
+                    goText.classList.remove('show');
+                }, 800);
+            }, 4500);
         }
 
         function resetarEscolha() {
@@ -341,18 +418,24 @@
             window.location.reload();
         }
 
+        // CORREÇÃO: Repaint do Iframe para evitar tela preta no retorno do 2º plano
         document.addEventListener("visibilitychange", function() {
-            if (document.visibilityState === "hidden") {
-                horaSaida = Date.now();
-            } else {
-                const tempoFora = (Date.now() - horaSaida) / 1000;
-                if (tempoFora > 600 && urlAtual) {
-                    window.location.reload();
-                } else {
-                    const frame = document.getElementById('app-frame');
-                    frame.style.opacity = '0.99'; 
-                    setTimeout(() => { frame.style.opacity = '1'; }, 10);
-                }
+            if (document.visibilityState === "visible" && urlAtual) {
+                const frame = document.getElementById('app-frame');
+                frame.style.display = 'none';
+                void frame.offsetHeight; // Força reflow
+                frame.style.display = 'block';
+            }
+        });
+
+        // CORREÇÃO: Interceptação do Botão Voltar do Android
+        history.pushState({ appState: 'running' }, "");
+        window.addEventListener('popstate', function(event) {
+            history.pushState({ appState: 'running' }, ""); // Mantém o app aberto
+            const frame = document.getElementById('app-frame');
+            if (frame && frame.contentWindow) {
+                // Envia sinal para o GAS
+                frame.contentWindow.postMessage({ acao: 'botao_voltar_pressionado' }, '*');
             }
         });
 
