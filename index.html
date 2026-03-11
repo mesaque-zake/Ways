@@ -60,14 +60,17 @@
             to { left: -25%; transform: scaleX(-1); }
         }
 
-        /* Controle de Profundidade: Tamanhos, Velocidades e Opacidades */
-        /* Uso de delay negativo para começarem já no meio da tela */
-        .neon-truck:nth-child(1) { width: 25px;  top: 10%; opacity: 0.3; animation: driveRight 22s linear infinite; animation-delay: -5s; }
-        .neon-truck:nth-child(2) { width: 35px;  top: 25%; opacity: 0.5; animation: driveLeft 18s linear infinite; animation-delay: -12s; }
-        .neon-truck:nth-child(3) { width: 50px;  top: 50%; opacity: 0.6; animation: driveRight 14s linear infinite; animation-delay: -3s; }
-        .neon-truck:nth-child(4) { width: 70px;  top: 75%; opacity: 0.8; animation: driveLeft 9s linear infinite; animation-delay: -6s; }
-        .neon-truck:nth-child(5) { width: 100px; top: 88%; opacity: 0.9; animation: driveRight 6s linear infinite; animation-delay: -1s; }
-
+        /* Controle de Profundidade: 8 Faixas Dinâmicas (Mais velocidade, sem poluição) */
+        /* Sentido Direita (Ímpares) e Esquerda (Pares) */
+        .neon-truck:nth-child(8n+1) { width: 22px;  top: 8%;  opacity: 0.2; animation: driveRight 17s linear infinite; animation-delay: -3s; }
+        .neon-truck:nth-child(8n+2) { width: 30px;  top: 20%; opacity: 0.3; animation: driveLeft 14s linear infinite; animation-delay: -11s; }
+        .neon-truck:nth-child(8n+3) { width: 40px;  top: 32%; opacity: 0.4; animation: driveRight 11s linear infinite; animation-delay: -6s; }
+        .neon-truck:nth-child(8n+4) { width: 55px;  top: 45%; opacity: 0.5; animation: driveLeft 9s linear infinite; animation-delay: -2s; }
+        .neon-truck:nth-child(8n+5) { width: 65px;  top: 58%; opacity: 0.6; animation: driveRight 7.5s linear infinite; animation-delay: -9s; }
+        .neon-truck:nth-child(8n+6) { width: 80px;  top: 70%; opacity: 0.7; animation: driveLeft 6s linear infinite; animation-delay: -4s; }
+        .neon-truck:nth-child(8n+7) { width: 95px;  top: 82%; opacity: 0.8; animation: driveRight 4.8s linear infinite; animation-delay: -1s; }
+        .neon-truck:nth-child(8n+8) { width: 115px; top: 92%; opacity: 0.9; animation: driveLeft 4s linear infinite; animation-delay: -7s; }
+        
         /* --- CAMADA DE VIDRO FOSCO GERAL --- */
         #glass-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2;
@@ -201,6 +204,9 @@
     </div>
 
     <div id="bg-animation-layer">
+        <svg class="neon-truck" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M48 0C21.5 0 0 21.5 0 48V368c0 26.5 21.5 48 48 48H64c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288 256 237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zM416 160h50.7L544 237.3V256H416V160zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
+        <svg class="neon-truck" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M48 0C21.5 0 0 21.5 0 48V368c0 26.5 21.5 48 48 48H64c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288 256 237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zM416 160h50.7L544 237.3V256H416V160zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
+        <svg class="neon-truck" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M48 0C21.5 0 0 21.5 0 48V368c0 26.5 21.5 48 48 48H64c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288 256 237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zM416 160h50.7L544 237.3V256H416V160zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
         <svg class="neon-truck" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M48 0C21.5 0 0 21.5 0 48V368c0 26.5 21.5 48 48 48H64c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288 256 237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zM416 160h50.7L544 237.3V256H416V160zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
         <svg class="neon-truck" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M48 0C21.5 0 0 21.5 0 48V368c0 26.5 21.5 48 48 48H64c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288 256 237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zM416 160h50.7L544 237.3V256H416V160zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
         <svg class="neon-truck" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M48 0C21.5 0 0 21.5 0 48V368c0 26.5 21.5 48 48 48H64c0 53 43 96 96 96s96-43 96-96H384c0 53 43 96 96 96s96-43 96-96h32c17.7 0 32-14.3 32-32s-14.3-32-32-32V288 256 237.3c0-17-6.7-33.3-18.7-45.3L512 114.7c-12-12-28.3-18.7-45.3-18.7H416V48c0-26.5-21.5-48-48-48H48zM416 160h50.7L544 237.3V256H416V160zM112 416a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm368-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
