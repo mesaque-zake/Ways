@@ -4,8 +4,8 @@
   "description": "Otimizador de Rotas Inteligente",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#6105e8",
-  "theme_color": "#6105e8",
+  "background_color": "#86198f",
+  "theme_color": "#86198f",
   "icons": [
     {
       "src": "icon-192.png",
