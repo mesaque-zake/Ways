@@ -104,32 +104,37 @@
             z-index: 5; display: flex; flex-direction: column; align-items: center;
             padding: 40px 60px;
         }
-
+        
         /* --- VIDRO CANELADO (7 degraus) --- */
         .glass-flutes {
-            position: absolute; top: -30px; bottom: -30px; left: -10px; right: -10px;
-            display: flex; z-index: -1; pointer-events: none;
+            position: absolute; top: -5px; bottom: -5px; left: 35px; right: 35px;
+            display: flex; align-items: center; z-index: -1; pointer-events: none;
         }
         .flute {
-            flex: 1; opacity: 0;
-            margin-top: calc((6 - var(--i)) * 5px); /* leve diagonal ascendente */
-            background: linear-gradient(90deg,
-                rgba(255, 255, 255, 0.35) 0%,
-                rgba(255, 255, 255, 0.10) 3%,
-                rgba(216, 120, 240, 0.22) 45%,
-                rgba(192, 38, 211, 0.06) 100%);
+            position: relative; flex: 1; opacity: 0;
+            height: var(--h);
+            transform: translateY(calc((3 - var(--i)) * 4px)); /* leve diagonal ascendente */
+            border-left: 1px solid rgba(255, 255, 255, calc(0.10 + var(--g) * 0.20)); /* refração lateral */
             -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 30%, #000 70%, transparent 100%);
             mask-image: linear-gradient(to bottom, transparent 0%, #000 30%, #000 70%, transparent 100%);
             animation: fluteIn 0.6s ease-out forwards;
             animation-delay: calc(0.2s + var(--i) * 0.2s);
         }
-        .flute:nth-child(1) { --a: 0.15; }
-        .flute:nth-child(2) { --a: 0.25; }
-        .flute:nth-child(3) { --a: 0.38; }
-        .flute:nth-child(4) { --a: 0.55; }
-        .flute:nth-child(5) { --a: 0.75; }
-        .flute:nth-child(6) { --a: 0.9; }
-        .flute:nth-child(7) { --a: 1; }
+        .flute::before {
+            content: ""; position: absolute; inset: 0;
+            background: linear-gradient(90deg,
+                rgba(255, 255, 255, calc(var(--g) * 0.18)) 0%,
+                rgba(214, 130, 245, calc(var(--g) * 0.55)) 50%,
+                rgba(192, 38, 211, calc(var(--g) * 0.12)) 100%);
+            filter: blur(var(--b));
+        }
+        .flute:nth-child(1) { --h: 30%; --g: 0.06; --b: 0.5px; }
+        .flute:nth-child(2) { --h: 38%; --g: 0.10; --b: 1px; }
+        .flute:nth-child(3) { --h: 46%; --g: 0.22; --b: 2px; }
+        .flute:nth-child(4) { --h: 56%; --g: 0.40; --b: 3px; }
+        .flute:nth-child(5) { --h: 67%; --g: 0.60; --b: 4px; }
+        .flute:nth-child(6) { --h: 81%; --g: 0.80; --b: 5px; }
+        .flute:nth-child(7) { --h: 95%; --g: 1;    --b: 6px; }
 
         .brand-text {
             font-family: 'Dancing Script', cursive; color: white;
@@ -169,7 +174,7 @@
         .retry-btn:active { transform: scale(0.95); }
 
         /* --- ANIMAÇÕES KEYFRAMES --- */
-        @keyframes fluteIn { to { opacity: var(--a, 0.6); } }
+        @keyframes fluteIn { to { opacity: 1; } }
         @keyframes dotPulse { 0%, 80%, 100% { transform: scale(0); opacity: 0.3; } 40% { transform: scale(1); opacity: 1; } }
     </style>
 </head>
