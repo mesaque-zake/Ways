@@ -112,8 +112,8 @@
         }
         .flute {
             position: relative; flex: 1; opacity: 0;
-            height: var(--h);
-            transform: translateY(calc((3 - var(--i)) * 4px)); /* leve diagonal ascendente */
+            height: 95%; /* mesma altura para todas */
+            transform: translateY(calc((3 - var(--i)) * 10px)); /* diagonal ascendente: só a posição muda */
             border-left: 1px solid rgba(255, 255, 255, calc(0.10 + var(--g) * 0.20)); /* refração lateral */
             -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 30%, #000 70%, transparent 100%);
             mask-image: linear-gradient(to bottom, transparent 0%, #000 30%, #000 70%, transparent 100%);
@@ -128,13 +128,13 @@
                 rgba(192, 38, 211, calc(var(--g) * 0.12)) 100%);
             filter: blur(var(--b));
         }
-        .flute:nth-child(1) { --h: 30%; --g: 0.06; --b: 0.5px; }
-        .flute:nth-child(2) { --h: 38%; --g: 0.10; --b: 1px; }
-        .flute:nth-child(3) { --h: 46%; --g: 0.22; --b: 2px; }
-        .flute:nth-child(4) { --h: 56%; --g: 0.40; --b: 3px; }
-        .flute:nth-child(5) { --h: 67%; --g: 0.60; --b: 4px; }
-        .flute:nth-child(6) { --h: 81%; --g: 0.80; --b: 5px; }
-        .flute:nth-child(7) { --h: 95%; --g: 1;    --b: 6px; }
+        .flute:nth-child(1) { --g: 0.06; --b: 0.5px; }
+        .flute:nth-child(2) { --g: 0.10; --b: 1px; }
+        .flute:nth-child(3) { --g: 0.22; --b: 2px; }
+        .flute:nth-child(4) { --g: 0.40; --b: 3px; }
+        .flute:nth-child(5) { --g: 0.60; --b: 4px; }
+        .flute:nth-child(6) { --g: 0.80; --b: 5px; }
+        .flute:nth-child(7) { --g: 1;    --b: 6px; }
 
         .brand-text {
             font-family: 'Dancing Script', cursive; color: white;
