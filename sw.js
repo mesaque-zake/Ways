@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ways-v19';
+const CACHE_NAME = 'ways-v20';
 
 const ASSETS = [
   './',
@@ -34,11 +34,46 @@ self.addEventListener('activate', (e) => {
   self.clients.claim(); // Garante que a aba atual já use o novo SW
 });
 
+const NETWORK_TIMEOUT = 3000; // Tempo-limite (ms) para considerar a rede fraca
+
+// Busca na rede ignorando o cache intermediário e atualiza o cache com a versão nova
+function fetchAndCache(req) {
+  return fetch(req, { cache: 'no-cache' }).then(res => {
+    if (res && res.ok) {
+      const copy = res.clone();
+      caches.open(CACHE_NAME).then(cache => cache.put(req, copy));
+    }
+    return res;
+  });
+}
+
 self.addEventListener('fetch', (e) => {
+  const req = e.request;
+
+  // Só trata GET do próprio site. GAS e fontes do Google vão direto para a rede
+  if (req.method !== 'GET' || new URL(req.url).origin !== self.location.origin) return;
+
+  const networkPromise = fetchAndCache(req);
+  e.waitUntil(networkPromise.catch(() => {})); // Mantém a atualização do cache viva em segundo plano
+
   e.respondWith(
-    caches.match(e.request).then(res => {
-      // Retorna do cache se existir, senão busca na rede
-      return res || fetch(e.request);
+    new Promise((resolve) => {
+      const fromCache = () => caches.match(req, { ignoreSearch: true });
+
+      // Rede fraca: passou do tempo-limite, responde com o cache (se existir)
+      const timer = setTimeout(() => {
+        fromCache().then(cached => { if (cached) resolve(cached); });
+      }, NETWORK_TIMEOUT);
+
+      // Rede respondeu a tempo: usa a versão nova
+      networkPromise.then(res => {
+        clearTimeout(timer);
+        resolve(res);
+      }).catch(() => {
+        // Sem rede: usa o cache
+        clearTimeout(timer);
+        fromCache().then(cached => resolve(cached || Response.error()));
+      });
     })
   );
 });
