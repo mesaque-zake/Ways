@@ -14,6 +14,14 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
+    <!-- Prévia de compartilhamento (WhatsApp, Instagram, Teams) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Ways">
+    <meta property="og:description" content="Otimizador de Rotas Inteligente">
+    <meta property="og:image" content="https://raw.githubusercontent.com/mesaque-zake/Ways/refs/heads/main/Icons/IconShare.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:image" content="https://raw.githubusercontent.com/mesaque-zake/Ways/refs/heads/main/Icons/IconShare.png">
+    
     <!-- Fontes -->
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
@@ -248,19 +256,25 @@
         // 1. Injeta a URL no iframe imediatamente ao abrir o app
         document.getElementById('app-frame').src = WAYS_URL;
 
-        // 2. Controla o tempo de tela do Splash Screen (Exatos 3 segundos)
-        window.addEventListener('load', () => {
+        // 2. Controla o tempo de tela do Splash Screen (3 segundos desde a abertura)
+        const splashStart = Date.now();
+        let splashHidden = false;
+
+        function hideSplash() {
+            if (splashHidden) return; // Roda uma vez só
+            splashHidden = true;
+            const splash = document.getElementById('splash-screen');
+            splash.style.opacity = '0';
+
+            // Aguarda a transição de opacidade acabar para sumir com a div
             setTimeout(() => {
-                const splash = document.getElementById('splash-screen');
-                splash.style.opacity = '0';
-                
-                // Aguarda a transição de opacidade acabar para sumir com a div
-                setTimeout(() => {
-                    splash.style.visibility = 'hidden';
-                    splash.style.display = 'none';
-                }, 600);
-            }, 3000);
-        });
+                splash.style.visibility = 'hidden';
+                splash.style.display = 'none';
+            }, 600);
+        }
+
+        // Não depende mais do evento "load": o prazo conta desde a abertura
+        setTimeout(hideSplash, 3000);
 
         // 3. Controle Inteligente do Modo Offline
         const offlineScreen = document.getElementById('offline-screen');
@@ -301,6 +315,8 @@
         // 4. Fix nativo para evitar tela branca no mobile (Volta de hibernação)
         document.addEventListener("visibilitychange", function() {
             if (document.visibilityState === "visible") {
+                // Se voltou do segundo plano com o prazo da splash vencido, revela o app
+                if (Date.now() - splashStart >= 3000) hideSplash();                
                 const frame = document.getElementById('app-frame');
                 frame.style.display = 'none';
                 void frame.offsetHeight; 
